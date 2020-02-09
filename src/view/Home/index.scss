@@ -1,0 +1,9 @@
+#home {
+  .function-button {
+    cursor: pointer;
+    color: #1890ff;
+    >span {
+      margin-right: 0.4rem;
+    }
+  }
+}

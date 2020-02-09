@@ -1,0 +1,58 @@
+#MarkdownEditor {
+  .edit-label {
+    width: 10%;
+    text-align: right;
+    display: inline-block;
+    font-size: 1.6rem;
+  }
+  .edit-input {
+    width: 90%;
+    margin-bottom: 2rem;
+  }
+  .upload-area {
+    position: relative;
+    display: inline-block;
+    height: 15rem;
+    width: 15rem;
+    border: 1px dashed #ccc;
+    border-radius: 3px;
+    margin-bottom: 1.2rem;
+    cursor: pointer;
+    &::after {
+      content: '+';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      font-weight: 200;
+      width: 100%;
+      height: 100%;
+      color: #ccc;
+      position: absolute;
+      top: 0rem;
+      left: 0rem;
+      z-index: -1;
+    }
+
+    .delete-background {
+      padding: 0.2rem;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      right: 0rem;
+      top: 0rem;
+      background: #f56c6c;
+      border-radius: 0.2rem;
+      >.icon {
+        fill: #FFF;
+      }
+    }
+
+    > input {
+      width: 100%;
+      height: 100%;
+      visibility: hidden;
+    }
+  }
+}

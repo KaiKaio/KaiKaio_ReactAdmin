@@ -1,0 +1,11 @@
+#header {
+  width: 82%;
+  margin-left: auto;
+  height: 5rem;
+  border-bottom: 0.1rem solid #ccc;
+  display: flex;
+  align-items: center;
+  > span {
+    margin-left: 1rem;
+  }
+}

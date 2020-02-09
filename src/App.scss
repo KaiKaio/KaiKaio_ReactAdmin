@@ -1,0 +1,92 @@
+* {
+  margin: 0px;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+.icon {
+  width: 1em; height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+#main {
+  margin-left: auto;
+  width: 82%;
+  height: calc(100vh - 5.1rem);
+  padding: 2rem 2rem;
+  overflow: hidden;
+}
+
+
+/* 路由动画相关样式 */
+.fade-enter,
+.fade-appear {
+  opacity: 0;
+  transform: translateX(30rem);
+}
+
+.fade-enter.fade-enter-active,
+.fade-appear.fade-appear-active {
+  opacity: 1;
+  transform: translateX(0rem);
+  transition: all 1.5s;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0;
+  transform: translateX(-30rem);
+  transition: all 1.5s;
+  position: absolute;
+  top: 0rem;
+}
+
+.fade-exit {
+  opacity: 1;
+  transform: translateX(0rem);
+}
+
+.router-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  >div {
+    width: 100%;
+    height: 100%;
+    padding-right: 2rem;
+    padding-bottom: 4rem;
+    overflow-y: auto;
+    mask-image: linear-gradient( to bottom,
+    rgba(255,255,255,1) 0,
+    rgba(255,255,255,1) 15%,
+    rgba(255,255,255,1) 25%,
+    rgba(255,255,255,1) 75%,
+    rgba(255,255,255,1) 85%,
+    rgba(255,255,255,.8) 90%,
+    rgba(255,255,255,.6) 95%,
+    rgba(255,255,255,.3) 100%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: .5rem;
+  height: .5rem;
+  background: hsla(0, 0%, 100%, 0.6);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background-color: rgba(95,95,95,.4);
+  transition: background-color .15s;
+
+  &:hover {
+    background-color: rgba(95,95,95, .7);
+  }
+}
