@@ -31,7 +31,8 @@ const MarkdownEditor: React.FC = (props:any, ref:any) => {
     id: id,
     value: value,
     title: title,
-    description: description
+    description: description,
+    coverUrl: coverUrl
   }));
 
   React.useEffect(() => {
@@ -41,7 +42,7 @@ const MarkdownEditor: React.FC = (props:any, ref:any) => {
         setValue(data[0].content)
         setTitle(data[0].title)
         setDescription(data[0].description)
-        setId(data[0].id)
+        setId(data[0]._id)
         setCoverUrl(data[0].cover)
       }).catch((err:any) => {
         console.log(err, '请求错误')
@@ -53,7 +54,7 @@ const MarkdownEditor: React.FC = (props:any, ref:any) => {
 
 
   let handleUpload = () => {
-    if(coverUrl === '') {
+    if(coverUrl === '' || coverUrl === null) {
       inputFile.current.click()
     } else {
       console.log('已有封面')
@@ -149,7 +150,7 @@ const MarkdownEditor: React.FC = (props:any, ref:any) => {
       <label className="edit-label">封面：</label>
       <div className="upload-area" style={ backgroundStyle() } onClick={ handleUpload }>
 
-        <div onClick={ handleDelCover } style={ coverUrl !== '' ? { display: 'flex' } : { display: 'none' } } className="delete-background">
+        <div onClick={ handleDelCover } style={ coverUrl === '' || coverUrl === null ? { display: 'none' } : { display: 'flex' } } className="delete-background">
           <svg className="icon" aria-hidden="true">
             <use xlinkHref="#icon-error"></use>
           </svg>
