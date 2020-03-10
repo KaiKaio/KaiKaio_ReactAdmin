@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { Table, Popconfirm, Avatar } from 'antd';
+import { Table, Popconfirm, Avatar, notification } from 'antd';
 
-import { getArticle } from 'src/api/Article'
+import { getArticle, deleteArticle } from 'src/api/Article'
 
 import './index.scss';
 
@@ -32,7 +32,24 @@ const Home: React.FC = (props:any) => {
   let handleEdit = (text:any) => {
     props.history.push(`/editArticle/${text._id}`)
   }
-  
+
+  let handleDelete = (text:any) => {
+    console.log(text, '传入')
+    console.log('删除')
+
+    deleteArticle(text)
+      .then(() => { // 数据库删除
+      return getArticle()
+    }).then((res:any) => { // 刷新列表
+      console.log(res, 'res')
+      setArticle(res)
+      notification['success']({ message: '删除成功' })
+    }).catch((err: any) => {
+      console.log(err, '删除错误')
+    })
+  }
+
+
   return (
     <div id="home">
       <Table<IArticleList> rowKey="_id" dataSource={Article}>
@@ -52,6 +69,7 @@ const Home: React.FC = (props:any) => {
             <span className="function-button">
               <Popconfirm
                 title="是否选择残忍删除？"
+                onConfirm={() => handleDelete(text)}
                 okText="错的不是我，是这个世界"
                 cancelText="算了，心软了"
               >

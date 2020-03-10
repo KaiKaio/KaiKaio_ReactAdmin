@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const instance = axios.create({
-	// baseURL: 'https://www.rcment.top/api',
-	baseURL: 'http://localhost:4000/api'
+	baseURL: 'https://www.kaikaio.com/api',
+	// baseURL: 'http://localhost:4000/api'
 });
 
 instance.interceptors.request.use((config) => {

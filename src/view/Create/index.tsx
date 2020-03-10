@@ -20,9 +20,10 @@ const Create: React.FC = () => {
     axios.post('/Article/Add', {
       content: Editor.current.value,
       title: Editor.current.title,
-      description: Editor.current.description
+      description: Editor.current.description,
+      cover: Editor.current.coverUrl
     }).then((res) => {
-      console.log(res, '提交编辑成功信息')
+      console.log(res, '添加成功信息')
       setTimeout(() => {
         setLoading(loading)
         setIconLoading(iconLoading)
