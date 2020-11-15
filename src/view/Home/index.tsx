@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Table, Popconfirm, Avatar, notification } from 'antd';
+import { Table, Popconfirm, Avatar, notification, Button } from 'antd';
 
 import { getArticle, deleteArticle } from 'src/api/Article'
 
@@ -52,6 +52,20 @@ const Home: React.FC = (props:any) => {
 
   return (
     <div id="home">
+      
+      <div className="article-nav">
+        <Button
+          onClick={ () => {}}
+          className="submit-bottom"
+        >已发布</Button>
+
+        <Button
+          onClick={ () => {}}
+          className="submit-bottom"
+        >草稿箱</Button>
+      </div>
+      
+
       <Table<IArticleList> rowKey="_id" dataSource={Article}>
       <Table.Column<IArticleList>
         key="cover"
