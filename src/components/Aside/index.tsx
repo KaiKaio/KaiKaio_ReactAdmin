@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom'
-
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'
+import { CSSTransition } from 'react-transition-group';
+import { Input, Icon, Button } from 'antd';
 
 import './index.scss'
 
 const Aside: React.FC = () => {
   const location:any = useLocation()
+
+  const [userName, setUserName] = React.useState('')
+  const [password, setPassword] = React.useState('')
+
+  const [ isLogin, setIsLogin ] = React.useState(false)
+
   const [ nav ] = React.useState([
     { name: '新建文章', path: '/create' },
     { name: '文章管理', path: '/' },
@@ -21,8 +27,18 @@ const Aside: React.FC = () => {
       key={item.name}>{ item.name }</Link>
   })
 
-  return (
+  let handleLogin = () => {
+    console.log(userName)
+    console.log(password)
+    setIsLogin(true)
+  }
 
+  let handlelogout = () => {
+    setIsLogin(false)
+  }
+
+  return (
+    
     <div id="aside">
       <div className="logo">
         <svg className="icon" aria-hidden="true">
@@ -30,8 +46,52 @@ const Aside: React.FC = () => {
         </svg>
         <span>KaiKaio</span>
       </div>
+
+      <CSSTransition
+        classNames="btn"
+        timeout={1500}
+        in={isLogin}
+        unmountOnExit={true}
+      >
       
-      { renderNav }
+        <div className="nav-wrapper">
+          { renderNav }
+          <div
+            onClick={() => {handlelogout()}}
+            className={'nav-item'}>
+              注销登录
+          </div>
+        </div>
+
+      </CSSTransition>
+
+
+      <CSSTransition
+        classNames="btn"
+        timeout={1500}
+        in={!isLogin}
+        unmountOnExit={true}
+      >
+        <div className="login-wrapper">
+          <Input
+            onChange={(e) => {setUserName(e.target.value)}} 
+            placeholder="请输入你的账号"
+            prefix={<Icon type="user" />}
+          />
+          <Input.Password
+          onChange={(e) => {setPassword(e.target.value)}} 
+            placeholder="请输入你的密码"
+            prefix={<Icon type="lock" />}
+          />
+
+        <Button
+          className="submit-bottom"
+          type="primary"
+          onClick={() => {handleLogin()}}
+        >登录</Button>
+
+        </div>
+      </CSSTransition>
     </div>
   );
 }
