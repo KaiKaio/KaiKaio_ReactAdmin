@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
+import { globalContext } from '../../App'
+
 
 interface IProrps {
   component?: React.ComponentType<any>;
@@ -10,11 +12,12 @@ interface IProrps {
 
 const AuthorizedRoute: React.FC<IProrps> = (props) => {
 
+  const GlobalContext:any = React.useContext(globalContext)
+
   const { component, path } = props
-  const isLogged = sessionStorage.getItem("isLogin") === "1" ? true : false;
 
   return (
-    isLogged ? <Route path={ path } component={ component }></Route> : <Redirect to="/login" />
+    GlobalContext.state.loginStatus ? <Route path={ path } component={ component }></Route> : <Redirect to="/login" />
   );
 }
 

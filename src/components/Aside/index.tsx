@@ -3,15 +3,17 @@ import { Link, useLocation } from 'react-router-dom'
 import { CSSTransition } from 'react-transition-group';
 import { Input, Icon, Button } from 'antd';
 
+import { globalContext } from '../../App'
+
 import './index.scss'
 
 const Aside: React.FC = () => {
   const location:any = useLocation()
 
+  const GlobalContext:any = React.useContext(globalContext)
+
   const [userName, setUserName] = React.useState('')
   const [password, setPassword] = React.useState('')
-
-  const [ isLogin, setIsLogin ] = React.useState(false)
 
   const [ nav ] = React.useState([
     { name: '新建文章', path: '/create' },
@@ -28,13 +30,12 @@ const Aside: React.FC = () => {
   })
 
   let handleLogin = () => {
-    console.log(userName)
-    console.log(password)
-    setIsLogin(true)
+    console.log(GlobalContext)
+    GlobalContext.dispatch({ type: 'handleLoginStatus', payload: true})
   }
 
   let handlelogout = () => {
-    setIsLogin(false)
+    GlobalContext.dispatch({ type: 'handleLoginStatus', payload: false})
   }
 
   return (
@@ -50,7 +51,7 @@ const Aside: React.FC = () => {
       <CSSTransition
         classNames="btn"
         timeout={1500}
-        in={isLogin}
+        in={GlobalContext.state.loginStatus}
         unmountOnExit={true}
       >
       
@@ -65,11 +66,10 @@ const Aside: React.FC = () => {
 
       </CSSTransition>
 
-
       <CSSTransition
         classNames="btn"
         timeout={1500}
-        in={!isLogin}
+        in={!GlobalContext.state.loginStatus}
         unmountOnExit={true}
       >
         <div className="login-wrapper">

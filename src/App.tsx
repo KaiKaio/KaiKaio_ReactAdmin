@@ -5,15 +5,37 @@ import Routes from './Routes';
 import Aside from './components/Aside'
 import Header from './components/Header'
 
+let globalReducer = (state:any, action:any) => {
+  switch (action.type) {
+    case 'handleLoginStatus':
+      return {
+        ...state,
+        loginStatus: action.payload
+      }
+    default:
+      return state
+  }
+}
+
+export const globalContext:any = React.createContext([])
+
 const App: React.FC = () => {
+  const globalState = {
+    loginStatus: false
+  }
+
+  const [ state, dispatch ] = React.useReducer(globalReducer, globalState)
+
   return (
-    <Router>
-      <Aside />
-      <Header />
-      <div id="main">
-        <Routes/>
-      </div>
-    </Router>
+    <globalContext.Provider value={{ state, dispatch }}>
+      <Router>
+        <Aside />
+        <Header />
+        <div id="main">
+          <Routes/>
+        </div>
+      </Router>
+    </globalContext.Provider>
   );
 }
 
