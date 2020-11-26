@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-	baseURL: 'https://api.kaikaio.com',
+	baseURL: 'https://api.kaikaio.com/api',
 	// baseURL: 'http://localhost:4000/api'
 });
 
