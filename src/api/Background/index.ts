@@ -2,7 +2,7 @@ import axios from 'src/config/axios'
 
 const getBackground = () => {
   return new Promise((resolve, reject) => {
-    axios.get('/Background/').then((res) => {
+    axios.get('/Background').then((res) => {
       const data = res.data.data
       resolve(data)
     }).catch(err => {

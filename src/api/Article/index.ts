@@ -2,7 +2,7 @@ import axios from 'src/config/axios'
 
 const getArticle = () => {
   return new Promise((resolve, reject) => {
-    axios.get('/Article/').then((res) => {
+    axios.get('/Article').then((res) => {
       const data = res.data.data
       resolve(data)
     }).catch(err => {

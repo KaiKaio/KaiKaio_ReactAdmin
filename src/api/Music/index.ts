@@ -2,7 +2,7 @@ import axios from 'src/config/axios'
 
 const getMusicList = () => {
   return new Promise((resolve, reject) => {
-    axios.get('/Music/').then((res) => {
+    axios.get('/Music').then((res) => {
       const data = res.data.data
       resolve(data)
     }).catch(err => {
