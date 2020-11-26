@@ -12,6 +12,11 @@ let globalReducer = (state:any, action:any) => {
         ...state,
         loginStatus: action.payload
       }
+    case 'setToken':
+      return {
+        ...state,
+        token: action.payload
+      }
     default:
       return state
   }
@@ -21,7 +26,8 @@ export const globalContext:any = React.createContext([])
 
 const App: React.FC = () => {
   const globalState = {
-    loginStatus: false
+    loginStatus: false,
+    token: ''
   }
 
   const [ state, dispatch ] = React.useReducer(globalReducer, globalState)
