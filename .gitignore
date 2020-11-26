@@ -6,6 +6,7 @@
 .pnp.js
 
 /src/config/oss-config.ts
+/src/config/certKey.ts
 
 # testing
 /coverage
