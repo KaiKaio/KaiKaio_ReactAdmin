@@ -6,12 +6,13 @@ import { Input, Icon, Button } from 'antd'
 import axios from 'src/config/axios';
 import {AxiosResponse} from 'axios';
 
-import JSEncrypt from 'jsencrypt'
 import { PUB_KEY } from '../../config/certKey'
 
 import { globalContext } from '../../App'
 
 import './index.scss'
+
+const JSEncrypt = require('jsencrypt');
 
 const Aside: React.FC = () => {
   const location:any = useLocation()
