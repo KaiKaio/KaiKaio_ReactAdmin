@@ -38,7 +38,8 @@ const Aside: React.FC = () => {
   })
 
   let handleLogin = () => {
-    const encrypt = new JSEncrypt();
+    const JSEncryptCus = JSEncrypt.JSEncrypt;
+    const encrypt = new JSEncryptCus();
     encrypt.setPublicKey(PUB_KEY);
     axios.post('/user/login', {
       userName,
