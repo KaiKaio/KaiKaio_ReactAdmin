@@ -22,6 +22,12 @@ let globalReducer = (state:any, action:any) => {
   }
 }
 
+declare global {
+  interface Window {
+    __POWERED_BY_QIANKUN__: any
+  }
+}
+
 export const globalContext:any = React.createContext([])
 
 const App: React.FC = () => {
@@ -34,7 +40,7 @@ const App: React.FC = () => {
 
   return (
     <globalContext.Provider value={{ state, dispatch }}>
-      <Router>
+      <Router basename={window.__POWERED_BY_QIANKUN__ ? '/react16' : '/'}>
         <Aside />
         <Header />
         <div id="main">
