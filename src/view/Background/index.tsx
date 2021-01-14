@@ -76,8 +76,7 @@ const Background:FC = () => {
   return (
     <div id="Background">
       <Spin spinning={uploadLoading}>
-        <div className="upload-frame" style={backgroundStyle()} onClick={uploadImg}>
-
+        <div aria-hidden="true" className="upload-frame" style={backgroundStyle()} onClick={uploadImg}>
           <Popconfirm
             title="是否选择残忍删除？"
             onConfirm={(e) => { handleDelBackground(e); }}
