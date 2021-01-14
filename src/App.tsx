@@ -1,36 +1,36 @@
 import React from 'react';
 import './App.scss';
-import { BrowserRouter as Router } from 'react-router-dom'
-import Routes from './Routes';
-import Aside from './components/Aside'
-import Header from './components/Header'
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from 'src/Routes';
+import Aside from 'src/components/Aside';
+import Header from 'src/components/Header';
 
-let globalReducer = (state:any, action:any) => {
+const globalReducer = (state: any, action: any) => {
   switch (action.type) {
     case 'handleLoginStatus':
       return {
         ...state,
-        loginStatus: action.payload
-      }
+        loginStatus: action.payload,
+      };
     case 'setToken':
       return {
         ...state,
-        token: action.payload
-      }
+        token: action.payload,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
-export const globalContext:any = React.createContext([])
+export const globalContext: any = React.createContext([]);
 
 const App: React.FC = () => {
   const globalState = {
     loginStatus: false,
-    token: ''
-  }
+    token: '',
+  };
 
-  const [ state, dispatch ] = React.useReducer(globalReducer, globalState)
+  const [state, dispatch] = React.useReducer(globalReducer, globalState);
 
   return (
     <globalContext.Provider value={{ state, dispatch }}>
@@ -38,11 +38,11 @@ const App: React.FC = () => {
         <Aside />
         <Header />
         <div id="main">
-          <Routes/>
+          <Routes />
         </div>
       </Router>
     </globalContext.Provider>
   );
-}
+};
 
 export default App;
