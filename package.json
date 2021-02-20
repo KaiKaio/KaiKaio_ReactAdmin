@@ -21,7 +21,6 @@
     "customize-cra": "^0.9.1",
     "dotenv-cli": "^4.0.0",
     "for-editor": "^0.3.5",
-    "jsencrypt": "^3.0.0-rc.1",
     "node-sass": "^4.13.0",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",

@@ -116,6 +116,7 @@ module.exports = {
       'error',
       {
         args: 'none', // 参数不检查
+        varsIgnorePattern: '[wW]indow',
       },
     ],
 
@@ -197,7 +198,7 @@ module.exports = {
     'no-underscore-dangle': [
       'error',
       {
-        allow: ['_id'],
+        allow: ['_id', '__POWERED_BY_QIANKUN__'],
       },
     ],
   },
