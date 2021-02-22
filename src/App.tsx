@@ -71,7 +71,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
               {
                 msg: 'token received',
               },
-              'http://localhost:3000/',
+              'https://sso.kaikaio.com/',
             );
           }
         },

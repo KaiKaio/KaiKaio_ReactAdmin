@@ -78,7 +78,7 @@ const Aside: React.FC = () => {
             className="submit-bottom"
             type="primary"
           >
-            <a href="http://localhost:3000/">登录</a>
+            <a href="https://sso.kaikaio.com/">登录</a>
           </Button>
         </div>
       </CSSTransition>
