@@ -46,8 +46,21 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
 
   const [state, dispatch] = useReducer(globalReducer, globalState);
 
+  const listenSetToken = ({ data: { method, token } }: any) => {
+    if (method === 'setToken') {
+      localStorage.setItem('token', token);
+      window.parent.postMessage(
+        {
+          msg: 'token received',
+        },
+        'https://sso.kaikaio.com/',
+      );
+    }
+  };
+
   useEffect(() => {
-    if (mainAppInfo.container) { // 基座内运行时
+    if (mainAppInfo.container) {
+      // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
         axios.defaults.headers.common.Authorization = `Bearer ${value}`;
         dispatch({ type: 'setToken', payload: value });
@@ -57,27 +70,26 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
     }
 
     // 独立运行时
-    axios.defaults.headers.common.Authorization = `Bearer ${localStorage.token || ''}`;
-    axios.get('/user/verifyToken').then(() => {
-      dispatch({ type: 'setToken', payload: localStorage.token });
-      dispatch({ type: 'handleLoginStatus', payload: true });
-    }).catch(() => {
-      window.addEventListener(
-        'message',
-        ({ data: { method, token } }) => {
-          if (method === 'setToken') {
-            localStorage.setItem('token', token);
-            window.parent.postMessage(
-              {
-                msg: 'token received',
-              },
-              'https://sso.kaikaio.com/',
-            );
-          }
-        },
-        false,
-      );
-    });
+    window.addEventListener('message', listenSetToken, false);
+
+    axios.defaults.headers.common.Authorization = `Bearer ${
+      localStorage.token || ''
+    }`;
+    axios
+      .get('/user/verifyToken')
+      .then(() => {
+        dispatch({ type: 'setToken', payload: localStorage.token });
+        dispatch({ type: 'handleLoginStatus', payload: true });
+        window.removeEventListener('message', listenSetToken);
+      })
+      .catch((err) => {
+        console.error(err, ' => 登录失败');
+      });
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      window.removeEventListener('message', listenSetToken);
+    };
   }, []);
 
   return (
