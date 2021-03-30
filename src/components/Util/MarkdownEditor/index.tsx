@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-for */
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, {
   useState, ForwardRefRenderFunction, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
@@ -55,8 +53,6 @@ const MarkdownEditor: ForwardRefRenderFunction<
         .catch((err: any) => {
           console.error(err, '请求错误');
         });
-    } else {
-      console.error('没有需要编辑的文章');
     }
   }, [match.params.id]);
 
@@ -135,61 +131,61 @@ const MarkdownEditor: ForwardRefRenderFunction<
       <div id="MarkdownEditor">
         <label className="edit-label" htmlFor="title">
           标题
-          <Input
-            className="edit-input"
-            placeholder="请输入本文章标题"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            id="title"
-          />
         </label>
+        <Input
+          className="edit-input"
+          placeholder="请输入本文章标题"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          id="title"
+        />
 
         <label className="edit-label" htmlFor="description">
           描述：
-          <Input
-            className="edit-input"
-            placeholder="请输入本文章描述"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            id="description"
-          />
         </label>
+        <Input
+          className="edit-input"
+          placeholder="请输入本文章描述"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          id="description"
+        />
 
         <label className="edit-label">
           封面：
+        </label>
+        <div
+          aria-hidden="true"
+          className="upload-area"
+          style={backgroundStyle()}
+          onClick={handleUpload}
+        >
           <div
             aria-hidden="true"
-            className="upload-area"
-            style={backgroundStyle()}
-            onClick={handleUpload}
+            onClick={handleDelCover}
+            style={
+            coverUrl === '' || coverUrl === null
+              ? { display: 'none' }
+              : { display: 'flex' }
+          }
+            className="delete-background"
           >
-            <div
-              aria-hidden="true"
-              onClick={handleDelCover}
-              style={
-              coverUrl === '' || coverUrl === null
-                ? { display: 'none' }
-                : { display: 'flex' }
-            }
-              className="delete-background"
-            >
-              <svg className="icon" aria-hidden="true">
-                <use xlinkHref="#icon-error" />
-              </svg>
-            </div>
-
-            <input
-              ref={inputFile}
-              className="background-file"
-              type="file"
-              multiple
-              accept="image/gif,image/jpeg,image/jpg,image/png"
-              onChange={onAddCover}
-              name="uploadMusic"
-              id="uploadMusic"
-            />
+            <svg className="icon" aria-hidden="true">
+              <use xlinkHref="#icon-error" />
+            </svg>
           </div>
-        </label>
+
+          <input
+            ref={inputFile}
+            className="background-file"
+            type="file"
+            multiple
+            accept="image/gif,image/jpeg,image/jpg,image/png"
+            onChange={onAddCover}
+            name="uploadMusic"
+            id="uploadMusic"
+          />
+        </div>
 
         <Editor
           ref={MEditor}
