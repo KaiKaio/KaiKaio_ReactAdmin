@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, {
-  useState, FC, useRef, useImperativeHandle, useEffect,
+  useState, ForwardRefRenderFunction, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 
@@ -17,7 +17,9 @@ import './index.scss';
 
 const { confirm } = Modal;
 
-const MarkdownEditor: FC = (props: any, ref: any) => {
+const MarkdownEditor: ForwardRefRenderFunction<
+  HTMLDivElement, {}
+> = (props: any, ref: any) => {
   const match: any = useRouteMatch();
 
   const [value, setValue] = useState('');
@@ -200,4 +202,4 @@ const MarkdownEditor: FC = (props: any, ref: any) => {
   );
 };
 
-export default React.forwardRef(MarkdownEditor);
+export default forwardRef(MarkdownEditor);
