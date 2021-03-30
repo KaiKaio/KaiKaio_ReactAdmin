@@ -3,23 +3,23 @@ import Loadable from 'react-loadable';
 import { Spin, Button } from 'antd';
 
 // 通用的过场组件{ error, timedOut }:any
-const loadingComponent = (props:any) => {
-  // eslint-disable-next-line no-console
-  console.log(props);
-  if (props.error) {
+const loadingComponent = ({
+  retry, error, timedOut, pastDelay,
+}: any) => {
+  if (error) {
     return (
       <div>
         a,o,页面走丢啦，
-        <Button onClick={props.retry}>重新加载</Button>
+        <Button onClick={retry}>重新加载</Button>
       </div>
     );
   }
 
-  if (props.timedOut) {
+  if (timedOut) {
     return <div>等待得太久了，可以重新点进来，说不定更快 </div>;
   }
 
-  if (props.pastDelay) {
+  if (pastDelay) {
     return <Spin tip="加载中" />;
   }
 
