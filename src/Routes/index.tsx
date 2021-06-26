@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  useLocation, Route, Switch, withRouter,
+  useLocation, Route, Switch,
 } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -39,4 +39,4 @@ const Routes: React.FC = () => {
   );
 };
 
-export default withRouter(Routes);
+export default Routes;

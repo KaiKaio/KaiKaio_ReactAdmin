@@ -34,6 +34,9 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'import/extensions': ['error', 'ignorePackages', {
+      js: 'never', jsx: 'never', ts: 'never', tsx: 'never',
+    }],
     // React内优先使用解构语法
     'react/destructuring-assignment': ['error', 'always'],
     // 强制将无状态React组件编写为纯函数
