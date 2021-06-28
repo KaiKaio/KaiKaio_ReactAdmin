@@ -39,8 +39,20 @@ const addMusic = (
   });
 });
 
+const sortMusicList = (changeIDList: {
+    sortIndex: number,
+    _id: string,
+  }[]) => new Promise<{code: number, msg: string}>((resolve, reject) => {
+    axios.post('/Music/Sort', { changeIDList }).then(({ data }) => {
+      resolve(data);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+
 export {
   getMusicList,
   deleteMusic,
   addMusic,
+  sortMusicList,
 };
