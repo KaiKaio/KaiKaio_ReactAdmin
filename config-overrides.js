@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-const { override, fixBabelImports, overrideDevServer } = require('customize-cra');
+const { override, fixBabelImports, addWebpackPlugin, overrideDevServer } = require('customize-cra');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { name } = require('./package.json');
 
 const QianKunConfig = () => (config) => {
@@ -27,6 +28,11 @@ const devServerConfig = () => (config) => {
 
 module.exports = {
   webpack: override(
+    addWebpackPlugin(
+      new MomentLocalesPlugin({
+        localesToKeep: ['es-us', 'zh-cn'], // 只保留你需要的语言包
+      })
+    ),
     QianKunConfig(),
     fixBabelImports('import', {
       libraryName: 'antd',
