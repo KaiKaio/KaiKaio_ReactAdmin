@@ -22,7 +22,7 @@
     "dotenv-cli": "^4.0.0",
     "for-editor": "^0.3.5",
     "immutability-helper": "^3.1.1",
-    "node-sass": "^4.13.0",
+    "node-sass": "^8.0.0",
     "react": "^16.14.0",
     "react-app-rewired": "^2.1.5",
     "react-dnd": "^14.0.2",
@@ -30,12 +30,13 @@
     "react-dom": "^16.14.0",
     "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^4.0.3",
     "react-transition-group": "^4.3.0",
+    "sass-loader": "^10.4.1",
     "typescript": "~4.2.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && react-app-rewired start",
     "start:test": "dotenv -e .env.test react-app-rewired start",
     "build": "dotenv -e .env.production react-app-rewired build",
     "build:test": "dotenv -e .env.test react-app-rewired build",
@@ -66,6 +67,7 @@
   },
   "config-overrides-path": "config-overrides.js",
   "devDependencies": {
+    "@types/ali-oss": "^6.16.11",
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "eslint": "^7.17.0",
