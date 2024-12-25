@@ -14,6 +14,7 @@ const Music = loadable(() => import('../view/Music'));
 const EditArticle = loadable(() => import('../view/EditArticle'));
 const Background = loadable(() => import('../view/Background'));
 const Login = loadable(() => import('../view/Login/loginPage'));
+const BillChart = loadable(() => import('../view/BillChart/BillChart'));
 
 const Routes: React.FC = () => {
   const location = useLocation();
@@ -33,6 +34,7 @@ const Routes: React.FC = () => {
           <AuthorizedRoute path="/editArticle/:id" component={EditArticle} />
           <AuthorizedRoute path="/music" component={Music} />
           <AuthorizedRoute path="/background" component={Background} />
+          <AuthorizedRoute path="/Bill-chart" component={BillChart} />
         </Switch>
       </CSSTransition>
     </TransitionGroup>

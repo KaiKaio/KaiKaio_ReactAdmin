@@ -19,6 +19,7 @@ const Aside: React.FC = () => {
     { name: '文章管理', path: '/' },
     { name: '音乐管理', path: '/music' },
     { name: '背景管理', path: '/background' },
+    { name: '账单统计', path: '/bill-chart' },
   ]);
 
   const renderNav = nav.map(item => (
