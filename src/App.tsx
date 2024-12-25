@@ -75,16 +75,21 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
     axios.defaults.headers.common.Authorization = `Bearer ${
       localStorage.token || ''
     }`;
-    axios
-      .get('/user/verifyToken')
-      .then(() => {
-        dispatch({ type: 'setToken', payload: localStorage.token });
-        dispatch({ type: 'handleLoginStatus', payload: true });
-        window.removeEventListener('message', listenSetToken);
-      })
-      .catch((err) => {
-        console.error(err, ' => 登录失败');
-      });
+    // axios
+    //   .get('/user/verifyToken')
+    //   .then(() => {
+    //     dispatch({ type: 'setToken', payload: localStorage.token });
+    //     dispatch({ type: 'handleLoginStatus', payload: true });
+    //     window.removeEventListener('message', listenSetToken);
+    //   })
+    //   .catch((err) => {
+    //     console.error(err, ' => 登录失败');
+    //   });
+
+    // TODO 临时使用
+    dispatch({ type: 'setToken', payload: localStorage.token });
+    dispatch({ type: 'handleLoginStatus', payload: true });
+    window.removeEventListener('message', listenSetToken);
 
     // eslint-disable-next-line consistent-return
     return () => {

@@ -42,7 +42,7 @@ const AddMusic: FC = () => {
     const file = e.target.files[0];
     const storeAs = `music/${file.name}`;
     client
-      .multipartUpload(storeAs, file)
+      .multipartUpload(storeAs, file, {})
       .then((res: any) => {
         // 上传
         setMusicLoading(false);
@@ -67,7 +67,7 @@ const AddMusic: FC = () => {
     const file = e.target.files[0];
     const storeAs = `albumArt/${file.name}`;
     client
-      .multipartUpload(storeAs, file)
+      .multipartUpload(storeAs, file, {})
       .then((res: any) => {
         // 上传
         setMusicLoading(false);

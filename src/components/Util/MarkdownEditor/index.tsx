@@ -70,7 +70,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
     const file = e.target.files[0];
     const storeAs = `article/${file.name}`;
     client
-      .multipartUpload(storeAs, file)
+      .multipartUpload(storeAs, file, {})
       .then((res: any) => {
         // 上传
         setupLoadLoading(false);
@@ -93,7 +93,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
   const addImg = ($file: any) => {
     const storeAs = `markdowmImg/${$file.name}`;
     client
-      .multipartUpload(storeAs, $file)
+      .multipartUpload(storeAs, $file, {})
       .then((res: any) => {
         // 上传
         let str = res.res.requestUrls[0];

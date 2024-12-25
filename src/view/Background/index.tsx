@@ -39,7 +39,7 @@ const Background:FC = () => {
 
     const file = e.target.files[0];
     const storeAs = `background/${file.name}`;
-    client.multipartUpload(storeAs, file).then((res:any) => { // 上传
+    client.multipartUpload(storeAs, file, {}).then((res:any) => { // 上传
       setupLoadLoading(false);
       let str = res.res.requestUrls[0];
 

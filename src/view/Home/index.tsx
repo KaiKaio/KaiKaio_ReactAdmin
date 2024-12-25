@@ -32,7 +32,7 @@ const Home: React.FC = (props: any) => {
   }, []);
 
   const handleEdit = (text: any) => {
-    props.history.push(`/editArticle/${text._id}`);
+    props?.history?.push(`/editArticle/${text._id}`);
   };
 
   const handleDelete = (text: any) => {
