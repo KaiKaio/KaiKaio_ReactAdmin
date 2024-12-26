@@ -5,7 +5,9 @@ import { useRouteMatch } from 'react-router-dom';
 
 import axios from 'src/config/fetchInstance';
 
-import { Spin, Modal, Input } from 'antd';
+import {
+  Spin, Modal, Input, Form,
+} from 'antd';
 
 import client from 'src/config/oss-config';
 
@@ -129,70 +131,69 @@ const MarkdownEditor: ForwardRefRenderFunction<
   return (
     <Spin spinning={uploadLoading}>
       <div id="MarkdownEditor">
-        <label className="edit-label" htmlFor="title">
-          标题
-        </label>
-        <Input
-          className="edit-input"
-          placeholder="请输入本文章标题"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          id="title"
-        />
+        <Form>
+          <Form.Item label="标题" htmlFor="title">
+            <Input
+              className="edit-input"
+              placeholder="请输入本文章标题"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              id="title"
+            />
+          </Form.Item>
 
-        <label className="edit-label" htmlFor="description">
-          描述：
-        </label>
-        <Input
-          className="edit-input"
-          placeholder="请输入本文章描述"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          id="description"
-        />
+          <Form.Item label="描述" htmlFor="description">
+            <Input
+              className="edit-input"
+              placeholder="请输入本文章描述"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              id="description"
+            />
+          </Form.Item>
 
-        <label className="edit-label">
-          封面：
-        </label>
-        <div
-          aria-hidden="true"
-          className="upload-area"
-          style={backgroundStyle()}
-          onClick={handleUpload}
-        >
-          <div
-            aria-hidden="true"
-            onClick={handleDelCover}
-            style={
-            coverUrl === '' || coverUrl === null
-              ? { display: 'none' }
-              : { display: 'flex' }
-          }
-            className="delete-background"
-          >
-            <svg className="icon" aria-hidden="true">
-              <use xlinkHref="#icon-error" />
-            </svg>
-          </div>
+          <Form.Item label="封面" htmlFor="uploadMusic">
+            <div
+              aria-hidden="true"
+              className="upload-area"
+              style={backgroundStyle()}
+              onClick={handleUpload}
+            >
+              <div
+                aria-hidden="true"
+                onClick={handleDelCover}
+                style={
+                coverUrl === '' || coverUrl === null
+                  ? { display: 'none' }
+                  : { display: 'flex' }
+              }
+                className="delete-background"
+              >
+                <svg className="icon" aria-hidden="true">
+                  <use xlinkHref="#icon-error" />
+                </svg>
+              </div>
 
-          <input
-            ref={inputFile}
-            className="background-file"
-            type="file"
-            multiple
-            accept="image/gif,image/jpeg,image/jpg,image/png"
-            onChange={onAddCover}
-            name="uploadMusic"
-            id="uploadMusic"
+              <input
+                ref={inputFile}
+                className="background-file"
+                type="file"
+                multiple
+                accept="image/gif,image/jpeg,image/jpg,image/png"
+                onChange={onAddCover}
+                name="uploadMusic"
+                id="uploadMusic"
+              />
+            </div>
+          </Form.Item>
+
+          <Editor
+            ref={MEditor}
+            value={value}
+            addImg={$file => addImg($file)}
+            onChange={Arvalue => handleChange(Arvalue)}
           />
-        </div>
-
-        <Editor
-          ref={MEditor}
-          value={value}
-          addImg={$file => addImg($file)}
-          onChange={Arvalue => handleChange(Arvalue)}
-        />
+        </Form>
       </div>
     </Spin>
   );

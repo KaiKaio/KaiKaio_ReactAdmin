@@ -7,8 +7,7 @@ import './BillChart.scss';
 // import { getBackground, addBackground, deleteBackground } from 'src/api/Background';
 
 import { DatePicker } from 'antd';
-import type { RangePickerValue } from "antd/lib/date-picker/interface.js"
-const { RangePicker } = DatePicker;
+import type { RangePickerValue } from 'antd/lib/date-picker/interface';
 
 import moment from 'moment';
 
@@ -26,10 +25,12 @@ type EChartsOption = echarts.ComposeOption<
   GridComponentOption | LineSeriesOption
 >;
 
+const { RangePicker } = DatePicker;
+
 const initDateRange = {
   startDate: moment().subtract(1, 'year'),
-  endDate: moment()
-}
+  endDate: moment(),
+};
 
 const BillChart: FC = () => {
   // const [uploadLoading] = useState(false);
@@ -40,20 +41,20 @@ const BillChart: FC = () => {
   const [endDate, setEndDate] = useState<string>(initDateRange.endDate.format('YYYY-MM'));
 
   const handleDateChange = (dates: RangePickerValue, dateStrings: [string, string]) => {
-    const [sDate, eDate] = dateStrings
-    setStartDate(sDate)
-    setEndDate(eDate)
-  }
+    const [sDate, eDate] = dateStrings;
+    setStartDate(sDate);
+    setEndDate(eDate);
+  };
 
   const etMonthsBetween = (startDateStr: string, endDateStr: string): string[] => {
     const months: string[] = [];
-    const startDate = new Date(startDateStr + '-01');
-    const endDate = new Date(endDateStr + '-01');
+    const gStartDate = new Date(`${startDateStr}-01`);
+    const gEndDate = new Date(`${endDateStr}-01`);
 
-    const startYear = startDate.getFullYear();
-    const startMonth = startDate.getMonth();
-    const endYear = endDate.getFullYear();
-    const endMonth = endDate.getMonth();
+    const startYear = gStartDate.getFullYear();
+    const startMonth = gStartDate.getMonth();
+    const endYear = gEndDate.getFullYear();
+    const endMonth = gEndDate.getMonth();
 
     let currentYear = startYear;
     let currentMonth = startMonth;
@@ -63,30 +64,27 @@ const BillChart: FC = () => {
       const monthStr = (currentMonth + 1).toString().padStart(2, '0');
       months.push(`${yearStr}-${monthStr}`);
 
-      currentMonth++;
+      currentMonth += 1;
       if (currentMonth === 12) {
         currentMonth = 0;
-        currentYear++;
+        currentYear += 1;
       }
     }
 
     return months;
-  }
+  };
 
   useEffect(() => {
-    console.log({ startDate, endDate })
     if (!startDate || !endDate) {
-      return
+      return undefined;
     }
 
-    const dateRange = etMonthsBetween(startDate, endDate)
+    const dateRange = etMonthsBetween(startDate, endDate);
 
-    const expenseData = dateRange.map((item) => {
-      return {
-        month: item,
-        amount: Math.floor(Math.random() * 10000)
-      }
-    })
+    const expenseData = dateRange.map(item => ({
+      month: item,
+      amount: Math.floor(Math.random() * 10000),
+    }));
 
     const myChart = echarts.init(chartRef.current);
 
@@ -94,15 +92,15 @@ const BillChart: FC = () => {
     const option: EChartsOption = {
       tooltip: {
         trigger: 'axis',
-        formatter: function (params : any) {
+        formatter: function fn(params : any) {
           let tip = '';
           params.forEach((param: any) => {
-            const value = param.value;
-            const name = param.name;
+            const { value } = param;
+            const { name } = param;
             tip += `${name}：￥${value}`;
           });
           return tip;
-        }
+        },
       },
       xAxis: {
         type: 'category',
@@ -123,12 +121,12 @@ const BillChart: FC = () => {
 
     return () => {
       // 组件销毁时清理echarts实例，避免内存泄漏
-      myChart.dispose();
+      myChart?.dispose();
     };
   }, [startDate, endDate]);
 
   return (
-    <div className='main'>
+    <div className="main">
       <RangePicker
         defaultValue={[initDateRange.startDate, initDateRange.endDate]}
         format="YYYY-MM"

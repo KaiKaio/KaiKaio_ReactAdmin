@@ -1,10 +1,15 @@
 /* eslint-disable no-console */
 import './public-path';
-
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from 'src/App';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
+moment.locale('zh-cn');
 
 declare global {
   interface Window {
@@ -16,7 +21,12 @@ declare global {
 
 function render(props:any) {
   const { container } = props;
-  ReactDOM.render(<App mainAppInfo={props} />, container ? container.querySelector('#root') : document.querySelector('#root'));
+  ReactDOM.render(
+    <ConfigProvider locale={zhCN}>
+      <App mainAppInfo={props} />
+    </ConfigProvider>,
+    container ? container.querySelector('#root') : document.querySelector('#root'),
+  );
 }
 
 if (!window.__POWERED_BY_QIANKUN__) { // 独立运行时（不依托qiankun基座时）
