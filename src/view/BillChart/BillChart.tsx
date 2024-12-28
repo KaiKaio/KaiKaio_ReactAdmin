@@ -2,6 +2,8 @@ import React, {
   FC, useState, useEffect, useRef,
 } from 'react';
 
+import { fetchBillByMonthly } from 'src/api/Bill';
+
 import './BillChart.scss';
 
 // import { getBackground, addBackground, deleteBackground } from 'src/api/Background';
@@ -46,78 +48,55 @@ const BillChart: FC = () => {
     setEndDate(eDate);
   };
 
-  const etMonthsBetween = (startDateStr: string, endDateStr: string): string[] => {
-    const months: string[] = [];
-    const gStartDate = new Date(`${startDateStr}-01`);
-    const gEndDate = new Date(`${endDateStr}-01`);
-
-    const startYear = gStartDate.getFullYear();
-    const startMonth = gStartDate.getMonth();
-    const endYear = gEndDate.getFullYear();
-    const endMonth = gEndDate.getMonth();
-
-    let currentYear = startYear;
-    let currentMonth = startMonth;
-
-    while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
-      const yearStr = currentYear.toString();
-      const monthStr = (currentMonth + 1).toString().padStart(2, '0');
-      months.push(`${yearStr}-${monthStr}`);
-
-      currentMonth += 1;
-      if (currentMonth === 12) {
-        currentMonth = 0;
-        currentYear += 1;
-      }
-    }
-
-    return months;
-  };
-
   useEffect(() => {
     if (!startDate || !endDate) {
       return undefined;
     }
 
-    const dateRange = etMonthsBetween(startDate, endDate);
-
-    const expenseData = dateRange.map(item => ({
-      month: item,
-      amount: Math.floor(Math.random() * 10000),
-    }));
+    // const dateRange = etMonthsBetween(startDate, endDate);
 
     const myChart = echarts.init(chartRef.current);
 
-    // 定义图表配置项
-    const option: EChartsOption = {
-      tooltip: {
-        trigger: 'axis',
-        formatter: function fn(params : any) {
-          let tip = '';
-          params.forEach((param: any) => {
-            const { value } = param;
-            const { name } = param;
-            tip += `${name}：￥${value}`;
-          });
-          return tip;
+    fetchBillByMonthly({
+      startMonth: startDate,
+      endMonth: endDate,
+    }).then((data:any = []) => {
+      // 定义图表配置项
+      const option: EChartsOption = {
+        tooltip: {
+          trigger: 'axis',
+          formatter: function fn(params : any) {
+            let tip = '';
+            params.forEach((param: any) => {
+              const { value } = param;
+              const { name } = param;
+              tip += `${name}：￥${value}`;
+            });
+            return tip;
+          },
         },
-      },
-      xAxis: {
-        type: 'category',
-        data: expenseData.map(item => item.month),
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
-        {
-          type: 'line',
-          data: expenseData.map(item => item.amount),
+        xAxis: {
+          type: 'category',
+          data: data.map((item: any) => item.month),
         },
-      ],
-    };
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter(value: number) {
+              return `￥${value}`;
+            },
+          },
+        },
+        series: [
+          {
+            type: 'line',
+            data: data.map((item: any) => item.total_expense),
+          },
+        ],
+      };
 
-    myChart.setOption(option);
+      myChart.setOption(option);
+    });
 
     return () => {
       // 组件销毁时清理echarts实例，避免内存泄漏
