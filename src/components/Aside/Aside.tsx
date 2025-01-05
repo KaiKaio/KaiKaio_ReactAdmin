@@ -4,6 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import { Button } from 'antd';
 
 import axios from 'src/config/fetchInstance';
+import billService from 'src/config/BillService';
 
 import { globalContext } from 'src/App';
 
@@ -35,6 +36,7 @@ const Aside: React.FC = () => {
   ));
   const handlelogout = () => {
     axios.defaults.headers.common.Authorization = '';
+    billService.defaults.headers.common.Authorization = '';
     GlobalContext.dispatch({ type: 'setToken', payload: '' });
     GlobalContext.dispatch({ type: 'handleLoginStatus', payload: false });
   };
@@ -79,7 +81,8 @@ const Aside: React.FC = () => {
             className="submit-bottom"
             type="primary"
           >
-            <a href="https://sso.kaikaio.com/">登录</a>
+            {/* <a href="https://sso.kaikaio.com/">登录</a> */}
+            <a href="http://localhost:3000/">登录</a>
           </Button>
         </div>
       </CSSTransition>

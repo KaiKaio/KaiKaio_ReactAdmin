@@ -11,6 +11,7 @@ import Routes from 'src/Routes';
 import Aside from 'src/components/Aside';
 import Header from 'src/components/Header';
 import axios from 'src/config/fetchInstance';
+import billService from 'src/config/BillService';
 
 const globalReducer = (state: any, action: any) => {
   switch (action.type) {
@@ -53,7 +54,8 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         {
           msg: 'token received',
         },
-        'https://sso.kaikaio.com/',
+        // 'https://sso.kaikaio.com/',
+        'http://localhost:3000/',
       );
     }
   };
@@ -63,6 +65,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
       // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
         axios.defaults.headers.common.Authorization = `Bearer ${value}`;
+        billService.defaults.headers.common.Authorization = `${value}`;
         dispatch({ type: 'setToken', payload: value });
         dispatch({ type: 'handleLoginStatus', payload: true });
       }, true);
@@ -75,21 +78,24 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
     axios.defaults.headers.common.Authorization = `Bearer ${
       localStorage.token || ''
     }`;
-    // axios
-    //   .get('/user/verifyToken')
-    //   .then(() => {
-    //     dispatch({ type: 'setToken', payload: localStorage.token });
-    //     dispatch({ type: 'handleLoginStatus', payload: true });
-    //     window.removeEventListener('message', listenSetToken);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err, ' => 登录失败');
-    //   });
+    billService.defaults.headers.common.Authorization = `${
+      localStorage.token || ''
+    }`;
+    axios
+      .get('/user/verifyToken')
+      .then(() => {
+        dispatch({ type: 'setToken', payload: localStorage.token });
+        dispatch({ type: 'handleLoginStatus', payload: true });
+        window.removeEventListener('message', listenSetToken);
+      })
+      .catch((err) => {
+        console.error(err, ' => 登录失败');
+      });
 
-    // TODO 临时使用
-    dispatch({ type: 'setToken', payload: localStorage.token });
-    dispatch({ type: 'handleLoginStatus', payload: true });
-    window.removeEventListener('message', listenSetToken);
+    // // TODO 临时使用
+    // dispatch({ type: 'setToken', payload: localStorage.token });
+    // dispatch({ type: 'handleLoginStatus', payload: true });
+    // window.removeEventListener('message', listenSetToken);
 
     // eslint-disable-next-line consistent-return
     return () => {

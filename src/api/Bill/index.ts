@@ -1,4 +1,4 @@
-import axios from 'src/config/fetchInstance';
+import axios from 'src/config/BillService';
 
 const fetchBillByMonthly = (params: any) => new Promise((resolve, reject) => {
   axios.get('/bill/queyBillByMonthly', { params }).then((res:any) => {
