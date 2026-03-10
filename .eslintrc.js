@@ -34,7 +34,7 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
-    'linebreak-style': [0,'error','window'],
+    'linebreak-style': [0, 'error', 'window'],
     'import/extensions': ['error', 'ignorePackages', {
       js: 'never', jsx: 'never', ts: 'never', tsx: 'never',
     }],
@@ -207,4 +207,12 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['config-overrides.js'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+  ],
 };
