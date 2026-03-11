@@ -15,6 +15,7 @@ const EditArticle = loadable(() => import('../view/EditArticle'));
 const Background = loadable(() => import('../view/Background'));
 const Login = loadable(() => import('../view/Login/loginPage'));
 const BillChart = loadable(() => import('../view/BillChart/BillChart'));
+const Bookkeeping = loadable(() => import('../view/Bookkeeping'));
 
 const Routes: React.FC = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const Routes: React.FC = () => {
           <AuthorizedRoute path="/music" component={Music} />
           <AuthorizedRoute path="/background" component={Background} />
           <AuthorizedRoute path="/Bill-chart" component={BillChart} />
+          <AuthorizedRoute path="/bookkeeping" component={Bookkeeping} />
         </Switch>
       </CSSTransition>
     </TransitionGroup>
