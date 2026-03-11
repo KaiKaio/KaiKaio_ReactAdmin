@@ -4,6 +4,7 @@ import React, {
   createContext,
   HTMLAttributes,
   useReducer,
+  useState,
 } from 'react';
 import './App.scss';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -40,6 +41,8 @@ interface IProps extends HTMLAttributes<HTMLAnchorElement> {
 export const globalContext: any = createContext([]);
 
 const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
+  const [initializing, setInitializing] = useState(true);
+
   const globalState = {
     loginStatus: false,
     token: '',
@@ -69,6 +72,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         billService.defaults.headers.common.Authorization = `${value}`;
         dispatch({ type: 'setToken', payload: value });
         dispatch({ type: 'handleLoginStatus', payload: true });
+        setInitializing(false);
       }, true);
       return;
     }
@@ -91,6 +95,9 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
       })
       .catch((err) => {
         console.error(err, ' => 登录失败');
+      })
+      .finally(() => {
+        setInitializing(false);
       });
 
     // // TODO 临时使用
@@ -103,6 +110,20 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
       window.removeEventListener('message', listenSetToken);
     };
   }, []);
+
+  if (initializing) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <globalContext.Provider value={{ state, dispatch }}>
