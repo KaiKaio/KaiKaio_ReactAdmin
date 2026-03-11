@@ -27,7 +27,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+        images: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/kaikaio-react-admin
         tags: |
           type=raw,value=sha-${{ github.sha }}
           type=raw,value=branch-${{ github.ref_name }}
@@ -42,8 +42,8 @@ jobs:
         platforms: linux/amd64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=registry,ref=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:cache
-        cache-to: type=registry,ref=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:cache,mode=max
+        cache-from: type=registry,ref=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/kaikaio-react-admin:cache
+        cache-to: type=registry,ref=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/kaikaio-react-admin:cache,mode=max
 
   # Optional: Deploy to server via SSH
   # deploy:
