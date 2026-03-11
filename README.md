@@ -46,7 +46,7 @@ npm run build
 
 - **核心框架**: React ^16.14.0, TypeScript ~4.2.4
 - **UI 组件**: Ant Design ^3.26.4
-- **样式预处理**: 
+- **样式预处理**:
   - 项目已将 `node-sass` 替换为 `sass` (Dart Sass)，解决了在现代 Node.js 环境下的编译和兼容性问题。
   - 移除了对 `python2.7` 和 C++ 编译环境的依赖。
 - **构建工具**: 使用 `react-app-rewired` 和 `customize-cra` 进行配置覆盖。
@@ -54,10 +54,13 @@ npm run build
 ## 注意事项
 
 ### OpenSSL Legacy Provider
+
 由于 Node.js 17+ 版本默认启用了 OpenSSL 3，这可能会导致某些旧的哈希算法报错。本项目已在 `start` 和 `build` 脚本中通过设置 `NODE_OPTIONS=--openssl-legacy-provider` 解决了此问题。
 
 ### 依赖安装
+
 建议使用配置了国内镜像源的 npm 进行安装，例如：
+
 ```bash
 npm config set registry https://registry.npmmirror.com/
 ```
