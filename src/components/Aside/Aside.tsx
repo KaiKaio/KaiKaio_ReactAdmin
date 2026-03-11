@@ -11,6 +11,7 @@ import { globalContext } from 'src/App';
 import './index.scss';
 
 const Aside: React.FC = () => {
+  const REACT_SSO_URL = process.env.REACT_APP_SSO_URL || '/';
   const location: any = useLocation();
 
   const GlobalContext: any = React.useContext(globalContext);
@@ -82,7 +83,7 @@ const Aside: React.FC = () => {
             type="primary"
           >
             {/* <a href="https://sso.kaikaio.com/">登录</a> */}
-            <a href="http://localhost:3000/">登录</a>
+            <a href={REACT_SSO_URL}>登录</a>
           </Button>
         </div>
       </CSSTransition>
