@@ -12,6 +12,18 @@ RUN npm ci --legacy-peer-deps
 # Copy the rest of the application code
 COPY . .
 
+# Build args for OSS config (to be passed via --build-arg in CI/CD)
+ARG REACT_APP_OSS_REGION
+ARG REACT_APP_OSS_ACCESS_KEY_ID
+ARG REACT_APP_OSS_ACCESS_KEY_SECRET
+ARG REACT_APP_OSS_BUCKET
+
+# Set environment variables so they are available during build
+ENV REACT_APP_OSS_REGION=$REACT_APP_OSS_REGION \
+    REACT_APP_OSS_ACCESS_KEY_ID=$REACT_APP_OSS_ACCESS_KEY_ID \
+    REACT_APP_OSS_ACCESS_KEY_SECRET=$REACT_APP_OSS_ACCESS_KEY_SECRET \
+    REACT_APP_OSS_BUCKET=$REACT_APP_OSS_BUCKET
+
 # Build the application
 # Use .env.docker for Docker build (sets PUBLIC_URL=/)
 # GENERATE_SOURCEMAP=false prevents generating source maps to reduce image size
