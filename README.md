@@ -57,6 +57,21 @@ npm run build
 
 由于 Node.js 17+ 版本默认启用了 OpenSSL 3，这可能会导致某些旧的哈希算法报错。本项目已在 `start` 和 `build` 脚本中通过设置 `NODE_OPTIONS=--openssl-legacy-provider` 解决了此问题。
 
+### Ali-OSS
+
+本项目使用了 Ali-OSS 作为对象存储服务。请确保在 `config/oss-config.ts` 中配置了正确的 AccessKeyId、AccessKeySecret、Bucket 和 Region。
+
+```typescript
+import OSS from 'ali-oss';
+
+export default new OSS({
+  accessKeyId: 'asdioasjfionefn,dsf',
+  accessKeySecret: 'asdnkjashdiuahiduwhasjd',
+  bucket: 'hainan',
+  region: 'hanzhou',
+});
+```
+
 ### 依赖安装
 
 建议使用配置了国内镜像源的 npm 进行安装，例如：
