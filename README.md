@@ -23,7 +23,7 @@ npm install
 npm start
 ```
 
-启动后，访问 [http://localhost:3002](http://localhost:3002) (默认端口配置在 `config-overrides.js` 中为 3002)。
+启动后，访问 [http://localhost:3002](http://localhost:3002) (默认端口配置在 `.env.development` 中为 3002)。
 
 ### 3. 构建生产版本
 
