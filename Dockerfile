@@ -14,7 +14,8 @@ COPY . .
 
 # Build the application
 # Use .env.docker for Docker build (sets PUBLIC_URL=/)
-RUN cp .env.docker .env.production && npm run build
+# GENERATE_SOURCEMAP=false prevents generating source maps to reduce image size
+RUN cp .env.docker .env.production && GENERATE_SOURCEMAP=false npm run build
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
