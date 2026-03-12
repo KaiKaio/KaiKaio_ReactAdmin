@@ -41,20 +41,40 @@ const Bookkeeping: React.FC = () => {
 
   const handleImport = (file: any) => {
     readExcel(file).then((json) => {
-      // console.log(json, '=> 解析后的 JSON 数据');
-      const formatted = json.map((item: any, index: number) => ({
-        id: index,
-        key: index,
-        date: item['日期'] ? moment(item['日期']).format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
-        type_name: item['类型'] || '',
-        pay_type: item['收支'] === '收入' ? '2' : '1',
-        amount: item['金额'] || 0,
-        remark: item['备注'] || '',
-      }));
+      const formatted = json.map((item: any, index: number) => {
+        // Date handling
+        const rawDate = item['日期'] || item['交易时间'];
+        const date = rawDate ? moment(rawDate).format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm');
+
+        // Type handling
+        const typeName = item['类型'] || item['交易类型'] || '';
+
+        // Pay Type handling
+        const rawPayType = item['收支'] || item['收/支'];
+        const payType = (rawPayType === '收入' || rawPayType === 'income') ? '2' : '1';
+
+        // Amount handling
+        const rawAmount = item['金额'] || item['金额(元)'] || 0;
+        const amount = rawAmount.toString().replace(/[¥,]/g, '');
+
+        // Remark handling
+        const remark = item['备注'] || item['商品'] || '';
+
+        return {
+          id: index,
+          key: index,
+          date,
+          type_name: typeName,
+          pay_type: payType,
+          amount,
+          remark,
+        };
+      });
       setImportData(formatted);
       setDrawerVisible(true);
       message.success('解析成功');
     }).catch((error) => {
+      console.error(error);
       message.error('解析失败');
     });
     return false;
