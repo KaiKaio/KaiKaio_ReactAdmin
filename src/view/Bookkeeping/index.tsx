@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Upload, Button, Icon, message, Table, DatePicker,
+  Upload, Button, Icon, message, Table, DatePicker, Drawer, Input, InputNumber, Select,
 } from 'antd';
 import moment from 'moment';
 import { getBillList } from 'src/api/Bookkeeping';
+import readExcel from 'src/utils/file';
 import './index.scss';
 
 const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 interface IBill {
   id: number;
@@ -34,22 +36,108 @@ const Bookkeeping: React.FC = () => {
   ]);
   const [totals, setTotals] = useState({ expense: 0, income: 0 });
 
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [importData, setImportData] = useState<any[]>([]);
+
+  const handleImport = (file: any) => {
+    readExcel(file).then((json) => {
+      // console.log(json, '=> 解析后的 JSON 数据');
+      const formatted = json.map((item: any, index: number) => ({
+        id: index,
+        key: index,
+        date: item['日期'] ? moment(item['日期']).format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
+        type_name: item['类型'] || '',
+        pay_type: item['收支'] === '收入' ? '2' : '1',
+        amount: item['金额'] || 0,
+        remark: item['备注'] || '',
+      }));
+      setImportData(formatted);
+      setDrawerVisible(true);
+      message.success('解析成功');
+    }).catch((error) => {
+      message.error('解析失败');
+    });
+    return false;
+  };
+
+  const handleCellChange = (value: any, index: number, field: string) => {
+    const newData = [...importData];
+    newData[index][field] = value;
+    setImportData(newData);
+  };
+
+  const saveImport = () => {
+    message.success('保存成功 (模拟)');
+    setDrawerVisible(false);
+  };
+
+  const importColumns = [
+    {
+      title: '日期',
+      dataIndex: 'date',
+      key: 'date',
+      render: (text: string, record: any, index: number) => (
+        <DatePicker
+          value={moment(text)}
+          onChange={(date, dateString) => handleCellChange(dateString, index, 'date')}
+          showTime
+          format="YYYY-MM-DD HH:mm"
+        />
+      ),
+    },
+    {
+      title: '类型',
+      dataIndex: 'type_name',
+      key: 'type_name',
+      render: (text: string, record: any, index: number) => (
+        <Input
+          value={text}
+          onChange={e => handleCellChange(e.target.value, index, 'type_name')}
+        />
+      ),
+    },
+    {
+      title: '收支',
+      dataIndex: 'pay_type',
+      key: 'pay_type',
+      render: (text: string, record: any, index: number) => (
+        <Select
+          value={text}
+          onChange={(val: any) => handleCellChange(val, index, 'pay_type')}
+          style={{ width: 80 }}
+        >
+          <Option value="1">支出</Option>
+          <Option value="2">收入</Option>
+        </Select>
+      ),
+    },
+    {
+      title: '金额',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (text: number, record: any, index: number) => (
+        <InputNumber
+          value={text}
+          onChange={val => handleCellChange(val, index, 'amount')}
+        />
+      ),
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      key: 'remark',
+      render: (text: string, record: any, index: number) => (
+        <Input
+          value={text}
+          onChange={e => handleCellChange(e.target.value, index, 'remark')}
+        />
+      ),
+    },
+  ];
+
   const uploadProps = {
-    name: 'file',
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
-    },
-    onChange(info: any) {
-      if (info.file.status !== 'uploading') {
-        // console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+    beforeUpload: handleImport,
+    showUploadList: false,
   };
 
   const fetchBillList = async (page = 1, pageSize = 10) => {
@@ -191,6 +279,39 @@ const Bookkeeping: React.FC = () => {
           onChange={handleTableChange}
         />
       </div>
+      <Drawer
+        title="导入账单预览"
+        width={720}
+        onClose={() => setDrawerVisible(false)}
+        visible={drawerVisible}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        <Table
+          dataSource={importData}
+          columns={importColumns}
+          pagination={false}
+          rowKey="id"
+        />
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            background: '#fff',
+            textAlign: 'right',
+          }}
+        >
+          <Button onClick={() => setDrawerVisible(false)} style={{ marginRight: 8 }}>
+            取消
+          </Button>
+          <Button onClick={saveImport} type="primary">
+            保存
+          </Button>
+        </div>
+      </Drawer>
     </div>
   );
 };
