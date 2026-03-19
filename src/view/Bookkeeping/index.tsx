@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Upload, Button, Icon, message, Table, DatePicker, Drawer, Input, InputNumber, Select,
+  Upload,
+  Button,
+  Icon,
+  message,
+  Table,
+  DatePicker,
 } from 'antd';
 import moment from 'moment';
 import { getBillList } from 'src/api/Bookkeeping';
 import readExcel from 'src/utils/file';
+import { IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
+import ImportBillDrawer from './components/ImportBillDrawer';
 import './index.scss';
 
 const { RangePicker } = DatePicker;
-const { Option } = Select;
-
-interface IBill {
-  id: number;
-  /* eslint-disable camelcase */
-  pay_type: '1' | '2';
-  amount: string;
-  date: string;
-  type_id: number;
-  type_name: string;
-  remark: string;
-  /* eslint-enable camelcase */
-}
 
 const Bookkeeping: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<IBill[]>([]);
+  const [data, setData] = useState<IBillItem[]>([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -37,34 +31,35 @@ const Bookkeeping: React.FC = () => {
   const [totals, setTotals] = useState({ expense: 0, income: 0 });
 
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [importData, setImportData] = useState<any[]>([]);
+  const [importData, setImportData] = useState<Partial<ILocalBillItem>[]>([]);
 
   const handleImport = (file: any) => {
     readExcel(file).then((json) => {
       const formatted = json.map((item: any, index: number) => {
         // Date handling
-        const rawDate = item['日期'] || item['交易时间'];
-        const date = rawDate ? moment(rawDate).format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm');
+        const rawDate: string = item['交易时间'];
+        const date = moment(rawDate).format('YYYY-MM-DD HH:mm');
 
         // Type handling
-        const typeName = item['类型'] || item['交易类型'] || '';
+        const typeName: string = item['交易类型'];
 
         // Pay Type handling
-        const rawPayType = item['收支'] || item['收/支'];
-        const payType = (rawPayType === '收入' || rawPayType === 'income') ? '2' : '1';
+        const rawPayType: string = item['收/支'];
+        const payType: '1' | '2' = rawPayType === '收入' ? '2' : '1';
 
         // Amount handling
-        const rawAmount = item['金额'] || item['金额(元)'] || 0;
+        const rawAmount: string = item['金额(元)'];
         const amount = rawAmount.toString().replace(/[¥,]/g, '');
 
-        // Remark handling
-        const remark = item['备注'] || item['商品'] || '';
+        // Remark handling （微信的商品字段适合备注）
+        const remark: string = item['商品'];
 
         return {
           id: index,
           key: index,
           date,
-          type_name: typeName,
+          originTypeName: typeName, // 数据源的交易类型
+          type_name: '', // 需要用户自己选择类型
           pay_type: payType,
           amount,
           remark,
@@ -79,81 +74,6 @@ const Bookkeeping: React.FC = () => {
     });
     return false;
   };
-
-  const handleCellChange = (value: any, index: number, field: string) => {
-    const newData = [...importData];
-    newData[index][field] = value;
-    setImportData(newData);
-  };
-
-  const saveImport = () => {
-    message.success('保存成功 (模拟)');
-    setDrawerVisible(false);
-  };
-
-  const importColumns = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-      render: (text: string, record: any, index: number) => (
-        <DatePicker
-          value={moment(text)}
-          onChange={(date, dateString) => handleCellChange(dateString, index, 'date')}
-          showTime
-          format="YYYY-MM-DD HH:mm"
-        />
-      ),
-    },
-    {
-      title: '类型',
-      dataIndex: 'type_name',
-      key: 'type_name',
-      render: (text: string, record: any, index: number) => (
-        <Input
-          value={text}
-          onChange={e => handleCellChange(e.target.value, index, 'type_name')}
-        />
-      ),
-    },
-    {
-      title: '收支',
-      dataIndex: 'pay_type',
-      key: 'pay_type',
-      render: (text: string, record: any, index: number) => (
-        <Select
-          value={text}
-          onChange={(val: any) => handleCellChange(val, index, 'pay_type')}
-          style={{ width: 80 }}
-        >
-          <Option value="1">支出</Option>
-          <Option value="2">收入</Option>
-        </Select>
-      ),
-    },
-    {
-      title: '金额',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (text: number, record: any, index: number) => (
-        <InputNumber
-          value={text}
-          onChange={val => handleCellChange(val, index, 'amount')}
-        />
-      ),
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      key: 'remark',
-      render: (text: string, record: any, index: number) => (
-        <Input
-          value={text}
-          onChange={e => handleCellChange(e.target.value, index, 'remark')}
-        />
-      ),
-    },
-  ];
 
   const uploadProps = {
     beforeUpload: handleImport,
@@ -171,7 +91,7 @@ const Bookkeeping: React.FC = () => {
         page_size: pageSize.toString(),
       });
 
-      const flatList: IBill[] = [];
+      const flatList: IBillItem[] = [];
       if (res && res.list) {
         res.list.forEach((item: any) => {
           if (item.bills) {
@@ -236,7 +156,7 @@ const Bookkeeping: React.FC = () => {
       title: '金额',
       dataIndex: 'amount',
       key: 'amount',
-      render: (text: string, record: IBill) => (
+      render: (text: string, record: IBillItem) => (
         <span style={{ color: record.pay_type === '1' ? 'red' : 'green' }}>
           {record.pay_type === '1' ? '-' : '+'}
           {text}
@@ -299,39 +219,14 @@ const Bookkeeping: React.FC = () => {
           onChange={handleTableChange}
         />
       </div>
-      <Drawer
-        title="导入账单预览"
-        width={720}
-        onClose={() => setDrawerVisible(false)}
+      <ImportBillDrawer
         visible={drawerVisible}
-        bodyStyle={{ paddingBottom: 80 }}
-      >
-        <Table
-          dataSource={importData}
-          columns={importColumns}
-          pagination={false}
-          rowKey="id"
-        />
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e9e9e9',
-            padding: '10px 16px',
-            background: '#fff',
-            textAlign: 'right',
-          }}
-        >
-          <Button onClick={() => setDrawerVisible(false)} style={{ marginRight: 8 }}>
-            取消
-          </Button>
-          <Button onClick={saveImport} type="primary">
-            保存
-          </Button>
-        </div>
-      </Drawer>
+        importData={importData}
+        onClose={() => setDrawerVisible(false)}
+        onSave={() => {
+          setDrawerVisible(false);
+        }}
+      />
     </div>
   );
 };
