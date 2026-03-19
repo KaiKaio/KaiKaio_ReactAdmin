@@ -16,3 +16,10 @@ export interface ILocalBillItem {
   remark: string;
   [key: string]: any;
 }
+
+export interface ITypeItem {
+  id: number;
+  name: string;
+  type: '1' | '2';
+  icon: string;
+}

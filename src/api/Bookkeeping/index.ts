@@ -1,5 +1,5 @@
 import axios from 'src/config/BillService';
-import { AxiosResponse } from 'axios';
+import { IBillItem, ITypeItem } from 'src/type/Bookkeeping';
 
 export interface BillListParams {
   start: string; // YYYY-MM-DD 00:00:00
@@ -10,37 +10,28 @@ export interface BillListParams {
 }
 
 export interface BillListResponse {
-  'code': number,
-  'msg': string,
-  'data': {
+  code: number,
+  msg: string,
+  data: {
     'totalExpense': number,
     'totalIncome': number,
     'totalPage': number,
     'list': {
-      'bills': {
-        'id': number,
-        'pay_type': '1' | '2',
-        'amount': string,
-        'date': string,
-        'type_id': number,
-        'type_name': string,
-        'remark': string
-      }[],
+      'bills': IBillItem[],
       'date': string
     }[]
   }
 }
 
-const getBillList = (params: BillListParams) => new Promise((resolve, reject) => {
-  axios.get('/bill/list', { params }).then((res: AxiosResponse<BillListResponse>) => {
-    const { data } = res.data;
-    resolve(data);
-  }).catch((err) => {
-    reject(err);
-  });
-});
+const getBillList = (params: BillListParams): Promise<BillListResponse> => axios.get('/bill/list', { params });
 
-const getBillTypeList = () => axios.get('/api/type/list');
+const getBillTypeList: () => Promise<{
+  'code': number,
+  'msg': string,
+  'data': {
+    'list': ITypeItem[]
+  }
+}> = () => axios.get('/type/list');
 
 export {
   getBillList,

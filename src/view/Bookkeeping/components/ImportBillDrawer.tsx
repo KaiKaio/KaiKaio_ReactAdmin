@@ -9,13 +9,14 @@ import {
   Select,
   message,
 } from 'antd';
+import { ITypeItem, IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import moment from 'moment';
-import { IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
 
 const { Option } = Select;
 
 interface ImportBillDrawerProps {
   visible: boolean;
+  typeList: ITypeItem[];
   importData: Partial<ILocalBillItem>[];
   onClose: () => void;
   onSave: (data: IBillItem[]) => void;
@@ -23,6 +24,7 @@ interface ImportBillDrawerProps {
 
 const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   visible,
+  typeList,
   importData,
   onClose,
   onSave,
@@ -49,10 +51,12 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   const importColumns = [
     {
       title: '日期',
+      width: 220,
       dataIndex: 'date',
       key: 'date',
       render: (text: string, record: any, index: number) => (
         <DatePicker
+          style={{ width: '100%' }}
           value={moment(text)}
           onChange={(date, dateString) => handleCellChange(dateString, index, 'date')}
           showTime
@@ -64,15 +68,24 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       title: '类型',
       dataIndex: 'type_name',
       key: 'type_name',
+      width: 160,
       render: (text: string, record: any, index: number) => (
-        <Input
+        <Select
+          style={{ width: '100%' }}
           value={text}
-          onChange={e => handleCellChange(e.target.value, index, 'type_name')}
-        />
+          onChange={(value: string) => handleCellChange(value, index, 'type_name')}
+        >
+          {typeList.map(item => (
+            <Option key={`${item.id}`} value={`${item.id}`}>
+              {item.name}
+            </Option>
+          ))}
+        </Select>
       ),
     },
     {
       title: '收支',
+      width: 160,
       dataIndex: 'pay_type',
       key: 'pay_type',
       render: (text: string, record: any, index: number) => (
@@ -88,6 +101,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     },
     {
       title: '金额',
+      width: 160,
       dataIndex: 'amount',
       key: 'amount',
       render: (text: number, record: any, index: number) => (
@@ -99,6 +113,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     },
     {
       title: '备注',
+      width: 160,
       dataIndex: 'remark',
       key: 'remark',
       render: (text: string, record: any, index: number) => (
@@ -119,6 +134,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       bodyStyle={{ paddingBottom: 80 }}
     >
       <Table
+        scroll={{ y: 460, x: 720 }}
         dataSource={localData}
         columns={importColumns}
         pagination={false}

@@ -8,9 +8,9 @@ import {
   DatePicker,
 } from 'antd';
 import moment from 'moment';
-import { getBillList } from 'src/api/Bookkeeping';
+import { getBillList, getBillTypeList } from 'src/api/Bookkeeping';
 import readExcel from 'src/utils/file';
-import { IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
+import { IBillItem, ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import ImportBillDrawer from './components/ImportBillDrawer';
 import './index.scss';
 
@@ -19,6 +19,7 @@ const { RangePicker } = DatePicker;
 const Bookkeeping: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<IBillItem[]>([]);
+  const [typeList, setTypeList] = useState<ITypeItem[]>([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -83,7 +84,7 @@ const Bookkeeping: React.FC = () => {
   const fetchBillList = async (page = 1, pageSize = 10) => {
     setLoading(true);
     try {
-      const res: any = await getBillList({
+      const { code = 500, data: resData } = await getBillList({
         start: dateRange[0].format('YYYY-MM-DD'),
         end: dateRange[1].format('YYYY-MM-DD'),
         orderBy: 'DESC',
@@ -91,9 +92,13 @@ const Bookkeeping: React.FC = () => {
         page_size: pageSize.toString(),
       });
 
+      const {
+        totalExpense = 0, totalIncome = 0, totalPage = 0, list = [],
+      } = resData || {};
+
       const flatList: IBillItem[] = [];
-      if (res && res.list) {
-        res.list.forEach((item: any) => {
+      if (code === 200 && list?.length) {
+        list.forEach((item) => {
           if (item.bills) {
             flatList.push(...item.bills);
           }
@@ -105,11 +110,11 @@ const Bookkeeping: React.FC = () => {
       setPagination({
         current: page,
         pageSize,
-        total: res.totalPage * pageSize,
+        total: totalPage * pageSize,
       });
       setTotals({
-        expense: res.totalExpense || 0,
-        income: res.totalIncome || 0,
+        expense: totalExpense || 0,
+        income: totalIncome || 0,
       });
     } catch (error) {
       console.error(error);
@@ -118,6 +123,15 @@ const Bookkeeping: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getBillTypeList().then((res) => {
+      const { code = 500, data: resData } = res || {};
+      if (code === 200) {
+        setTypeList(resData?.list || []);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     fetchBillList(pagination.current, pagination.pageSize);
@@ -221,6 +235,7 @@ const Bookkeeping: React.FC = () => {
       </div>
       <ImportBillDrawer
         visible={drawerVisible}
+        typeList={typeList}
         importData={importData}
         onClose={() => setDrawerVisible(false)}
         onSave={() => {
