@@ -40,6 +40,9 @@ const getBillList = (params: BillListParams) => new Promise((resolve, reject) =>
   });
 });
 
+const getBillTypeList = () => axios.get('/api/type/list');
+
 export {
   getBillList,
+  getBillTypeList,
 };
