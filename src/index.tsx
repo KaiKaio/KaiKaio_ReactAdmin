@@ -3,7 +3,7 @@ import './public-path';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/es/locale/zh_CN';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from 'src/App';
 import moment from 'moment';
@@ -19,13 +19,18 @@ declare global {
   }
 }
 
+let root: any;
+
 function render(props:any) {
   const { container } = props;
-  ReactDOM.render(
+  const dom = container ? container.querySelector('#root') : document.querySelector('#root');
+  if (!root) {
+    root = createRoot(dom!);
+  }
+  root.render(
     <ConfigProvider locale={zhCN}>
       <App mainAppInfo={props} />
-    </ConfigProvider>,
-    container ? container.querySelector('#root') : document.querySelector('#root'),
+    </ConfigProvider>
   );
 }
 
@@ -43,6 +48,8 @@ export async function mount(props:any) {
 }
 
 export async function unmount(props:any) {
-  const { container } = props;
-  ReactDOM.unmountComponentAtNode(container ? container.querySelector('#root') : document.querySelector('#root'));
+  if (root) {
+    root.unmount();
+    root = null;
+  }
 }
