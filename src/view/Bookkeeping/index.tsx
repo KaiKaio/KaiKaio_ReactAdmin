@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
   Upload,
   Button,
-  Icon,
   message,
   Table,
   DatePicker,
 } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { getBillList, getBillTypeList } from 'src/api/Bookkeeping';
 import readExcel from 'src/utils/file';
@@ -215,9 +215,7 @@ const Bookkeeping: React.FC = () => {
         <div className="upload-wrapper">
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <Upload {...uploadProps}>
-            <Button>
-              <Icon type="upload" />
-              {' '}
+            <Button icon={<UploadOutlined />}>
               导入账单
             </Button>
           </Upload>

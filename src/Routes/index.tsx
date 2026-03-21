@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  useLocation, Route, Switch,
+  useLocation, Route, Routes,
 } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -17,7 +17,7 @@ const Login = loadable(() => import('../view/Login/loginPage'));
 const BillChart = loadable(() => import('../view/BillChart/BillChart'));
 const Bookkeeping = loadable(() => import('../view/Bookkeeping'));
 
-const Routes: React.FC = () => {
+const AppRoutes: React.FC = () => {
   const location = useLocation();
   return (
     <TransitionGroup className="router-wrapper">
@@ -28,16 +28,16 @@ const Routes: React.FC = () => {
         timeout={1500}
         unmountOnExit
       >
-        <Switch location={location}>
-          <Route path="/login" component={Login} />
-          <AuthorizedRoute path="/" component={Home} exact />
-          <AuthorizedRoute path="/create" component={Create} />
-          <AuthorizedRoute path="/editArticle/:id" component={EditArticle} />
-          <AuthorizedRoute path="/music" component={Music} />
-          <AuthorizedRoute path="/background" component={Background} />
-          <AuthorizedRoute path="/Bill-chart" component={BillChart} />
-          <AuthorizedRoute path="/bookkeeping" component={Bookkeeping} />
-        </Switch>
+        <Routes location={location}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/create" element={<Create />} />
+          <Route path="/editArticle/:id" element={<EditArticle />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/background" element={<Background />} />
+          <Route path="/Bill-chart" element={<BillChart />} />
+          <Route path="/bookkeeping" element={<Bookkeeping />} />
+        </Routes>
       </CSSTransition>
     </TransitionGroup>
   );

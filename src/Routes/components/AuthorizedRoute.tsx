@@ -1,7 +1,7 @@
 import React, {
   FC, HTMLAttributes, ComponentType, useContext,
 } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 
 import { globalContext } from 'src/App';
 
@@ -19,7 +19,7 @@ const AuthorizedRoute: FC<IProrps> = ({
   return GlobalContext.state.loginStatus ? (
     <Route path={path} exact={exact} strict={stict} component={component} />
   ) : (
-    <Redirect to="/login" />
+    <Navigate to="/login" replace />
   );
 };
 
