@@ -6,7 +6,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import loadable from 'src/utils/loadable';
 
-import AuthorizedRoute from 'src/Routes/components/AuthorizedRoute';
+// import AuthorizedRoute from 'src/Routes/components/AuthorizedRoute';
 
 const Home = loadable(() => import('../view/Home'));
 const Create = loadable(() => import('../view/Create'));
@@ -43,4 +43,4 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-export default Routes;
+export default AppRoutes;

@@ -49,7 +49,9 @@ const Aside: React.FC = () => {
         <svg className="icon" aria-hidden="true">
           <use xlinkHref="#icon-cat" />
         </svg>
-        <span>KaiKaio</span>
+        <span>
+          KaiKaio
+        </span>
       </div>
 
       <CSSTransition
@@ -84,7 +86,9 @@ const Aside: React.FC = () => {
             type="primary"
           >
             {/* <a href="https://sso.kaikaio.com/">登录</a> */}
-            <a href={REACT_SSO_URL}>登录</a>
+            <a href={REACT_SSO_URL}>
+              登录
+            </a>
           </Button>
         </div>
       </CSSTransition>

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 const {
-  override, fixBabelImports, addWebpackPlugin, overrideDevServer,
+  override, addWebpackPlugin, overrideDevServer,
 } = require('customize-cra');
 const webpack = require('webpack');
 const { name } = require('./package.json');
@@ -27,6 +27,27 @@ const devServerConfig = () => (config) => {
   };
 };
 
+const addSassSilenceDeprecations = () => (config) => {
+  const oneOfRule = config.module.rules.find(rule => rule.oneOf);
+  if (oneOfRule) {
+    oneOfRule.oneOf.forEach((rule) => {
+      if (rule.use && Array.isArray(rule.use)) {
+        rule.use.forEach((loader) => {
+          if (loader.loader && loader.loader.includes('sass-loader')) {
+            if (loader.options) {
+              loader.options.sassOptions = {
+                ...loader.options.sassOptions,
+                silenceDeprecations: ['legacy-js-api'],
+              };
+            }
+          }
+        });
+      }
+    });
+  }
+  return config;
+};
+
 module.exports = {
   webpack: override(
     addWebpackPlugin(
@@ -36,6 +57,7 @@ module.exports = {
       }),
     ),
     QianKunConfig(),
+    addSassSilenceDeprecations(),
     // Ant Design 5.x 使用 CSS-in-JS，不再需要 babel-plugin-import
     // fixBabelImports('import', {
     //   libraryName: 'antd',

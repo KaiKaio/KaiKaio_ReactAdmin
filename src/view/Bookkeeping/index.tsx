@@ -7,7 +7,7 @@ import {
   DatePicker,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getBillList, getBillTypeList } from 'src/api/Bookkeeping';
 import readExcel from 'src/utils/file';
 import { IBillItem, ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
@@ -25,9 +25,9 @@ const Bookkeeping: React.FC = () => {
     pageSize: 10,
     total: 0,
   });
-  const [dateRange, setDateRange] = useState<[moment.Moment, moment.Moment]>([
-    moment().startOf('month'),
-    moment().endOf('month'),
+  const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+    dayjs().startOf('month'),
+    dayjs().endOf('month'),
   ]);
   const [totals, setTotals] = useState({ expense: 0, income: 0 });
 
@@ -39,7 +39,7 @@ const Bookkeeping: React.FC = () => {
       const formatted = json.map((item: any, index: number) => {
         // Date handling
         const rawDate: string = item['交易时间'];
-        const date = moment(rawDate).format('YYYY-MM-DD HH:mm');
+        const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
 
         // Type handling
         const typeName: string = item['交易类型'];
@@ -153,7 +153,7 @@ const Bookkeeping: React.FC = () => {
       title: '日期',
       dataIndex: 'date',
       key: 'date',
-      render: (text: string) => moment(text).format('YYYY-MM-DD HH:mm'),
+      render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm'),
     },
     {
       title: '类型',

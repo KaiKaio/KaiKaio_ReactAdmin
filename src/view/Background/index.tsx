@@ -94,7 +94,9 @@ const Background:FC = () => {
             <svg className="icon" aria-hidden="true">
               <use xlinkHref="#icon-add" />
             </svg>
-            <p>上传背景图</p>
+            <p>
+              上传背景图
+            </p>
           </div>
         </div>
       </Spin>

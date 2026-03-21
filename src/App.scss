@@ -14,11 +14,12 @@ html {
 }
 
 #main {
-  margin-left: auto;
-  width: 82%;
+  margin-left: 260px;
+  width: calc(100% - 260px);
   height: calc(100vh - 5.1rem);
   padding: 2rem 2rem;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 

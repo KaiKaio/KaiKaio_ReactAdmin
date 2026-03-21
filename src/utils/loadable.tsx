@@ -10,13 +10,18 @@ const loadingComponent = ({
     return (
       <div>
         a,o,页面走丢啦，
-        <Button onClick={retry}>重新加载</Button>
+        <Button onClick={retry}>
+          重新加载
+        </Button>
       </div>
     );
   }
 
   if (timedOut) {
-    return <div>等待得太久了，可以重新点进来，说不定更快 </div>;
+    return (<div>
+      等待得太久了，可以重新点进来，说不定更快
+      {' '}
+    </div>);
   }
 
   if (pastDelay) {

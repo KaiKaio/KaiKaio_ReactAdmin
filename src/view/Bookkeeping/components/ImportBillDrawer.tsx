@@ -94,8 +94,12 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
           onChange={(val: any) => handleCellChange(val, index, 'pay_type')}
           style={{ width: 80 }}
         >
-          <Option value="1">支出</Option>
-          <Option value="2">收入</Option>
+          <Option value="1">
+            支出
+          </Option>
+          <Option value="2">
+            收入
+          </Option>
         </Select>
       ),
     },
