@@ -3,15 +3,6 @@ const {
   override, addWebpackPlugin, overrideDevServer,
 } = require('customize-cra');
 const webpack = require('webpack');
-// const { name } = require('./package.json');
-
-// const QianKunConfig = () => (config) => {
-//   config.output.library = `${name}-[name]`;
-//   config.output.libraryTarget = 'umd';
-//   config.output.chunkLoadingGlobal = `webpackJsonp_${name}`;
-//   config.output.globalObject = 'window';
-//   return config;
-// };
 
 const devServerConfig = () => (config) => {
   // config.port = 3009; // Port is now managed via .env files
@@ -56,7 +47,6 @@ module.exports = {
         contextRegExp: /moment$/,
       }),
     ),
-    // QianKunConfig(),
     addSassSilenceDeprecations(),
     // Ant Design 5.x 使用 CSS-in-JS，不再需要 babel-plugin-import
     // fixBabelImports('import', {

@@ -194,12 +194,6 @@ module.exports = {
         ],
       },
     ],
-    'no-underscore-dangle': [
-      'error',
-      {
-        allow: ['_id', '__POWERED_BY_QIANKUN__'],
-      },
-    ],
   },
   overrides: [
     {
