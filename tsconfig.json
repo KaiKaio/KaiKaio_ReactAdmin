@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["moment"],
+    "types": ["moment", "vite/client"],
     "baseUrl": ".",
     "target": "es5",
     "lib": [

@@ -134,8 +134,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       title="导入账单预览"
       width={720}
       onClose={onClose}
-      visible={visible}
-      bodyStyle={{ paddingBottom: 80 }}
+      open={visible}
     >
       <Table
         scroll={{ y: 460, x: 720 }}

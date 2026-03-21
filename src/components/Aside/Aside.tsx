@@ -11,10 +11,13 @@ import { globalContext } from 'src/App';
 import './index.scss';
 
 const Aside: React.FC = () => {
-  const REACT_SSO_URL = process.env.REACT_APP_SSO_URL || '/';
+  const REACT_SSO_URL = import.meta.env.VITE_SSO_URL || '/';
   const location: any = useLocation();
 
   const GlobalContext: any = React.useContext(globalContext);
+  
+  const navRef = React.useRef(null);
+  const loginRef = React.useRef(null);
 
   const [nav] = React.useState([
     { name: '新建文章', path: '/create' },
@@ -59,8 +62,9 @@ const Aside: React.FC = () => {
         timeout={1500}
         in={GlobalContext.state.loginStatus}
         unmountOnExit
+        nodeRef={navRef}
       >
-        <div className="nav-wrapper">
+        <div className="nav-wrapper" ref={navRef}>
           {renderNav}
           <div
             aria-hidden="true"
@@ -79,8 +83,9 @@ const Aside: React.FC = () => {
         timeout={1500}
         in={!GlobalContext.state.loginStatus}
         unmountOnExit
+        nodeRef={loginRef}
       >
-        <div className="login-wrapper">
+        <div className="login-wrapper" ref={loginRef}>
           <Button
             className="submit-bottom"
             type="primary"

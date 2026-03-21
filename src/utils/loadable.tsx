@@ -1,42 +1,54 @@
-import React from 'react';
-import Loadable from 'react-loadable';
+import React, { Suspense } from 'react';
 import { Spin, Button } from 'antd';
 
-// 通用的过场组件{ error, timedOut }:any
-const loadingComponent = ({
-  retry, error, timedOut, pastDelay,
-}: any) => {
-  if (error) {
-    return (
-      <div>
-        a,o,页面走丢啦，
-        <Button onClick={retry}>
-          重新加载
-        </Button>
-      </div>
-    );
-  }
-
-  if (timedOut) {
-    return (<div>
-      等待得太久了，可以重新点进来，说不定更快
-      {' '}
-    </div>);
-  }
-
-  if (pastDelay) {
-    return <Spin tip="加载中" />;
-  }
-
-  return <Spin tip="加载中" />;
+// 通用的过场组件
+const LoadingComponent = () => {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+      <Spin />
+    </div>
+  );
 };
 
-const loadComponent = (loader:any, loading = loadingComponent) => Loadable({
-  loader,
-  loading,
-  delay: 3000, // 0.3 Seconds
-  timeout: 10000, // 10 Seconds
-});
+class ErrorBoundary extends React.Component<any, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-// 过场组件默认采用通用的，若传入了loading，则采用传入的过场组件
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    const { hasError } = this.state;
+    const { children } = this.props;
+    if (hasError) {
+      return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          a,o,页面走丢啦，
+          <Button onClick={() => window.location.reload()}>
+            重新加载
+          </Button>
+        </div>
+      );
+    }
+    return children;
+  }
+}
+
+const loadComponent = (loader: () => Promise<any>) => {
+  const LazyComponent = React.lazy(loader);
+
+  return function LazyWrapper(props: any) {
+    return (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingComponent />}>
+          <LazyComponent {...props} />
+        </Suspense>
+      </ErrorBoundary>
+    );
+  };
+};
+
 export default loadComponent;

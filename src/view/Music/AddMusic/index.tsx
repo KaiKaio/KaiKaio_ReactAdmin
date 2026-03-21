@@ -100,7 +100,7 @@ const AddMusic: FC = () => {
       {/* 添加音乐 Modal 框 */}
       <Modal
         title="添加音乐"
-        visible={musicContext.state.AddVisible}
+        open={musicContext.state.AddVisible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={() => musicContext.dispatch({ type: 'closeAdd' })}

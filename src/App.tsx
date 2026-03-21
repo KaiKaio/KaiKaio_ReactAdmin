@@ -32,10 +32,7 @@ const globalReducer = (state: any, action: any) => {
 };
 
 interface IProps extends HTMLAttributes<HTMLAnchorElement> {
-  mainAppInfo: {
-    container: HTMLElement;
-    onGlobalStateChange: any;
-  };
+  mainAppInfo?: any;
 }
 
 export const globalContext: any = createContext([]);
@@ -57,15 +54,13 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         {
           msg: 'token received',
         },
-        // 'https://sso.kaikaio.com/',
-        // 'http://localhost:3000/',
-        process.env.REACT_APP_SSO_URL || '/',
+        import.meta.env.VITE_SSO_URL || '/',
       );
     }
   };
 
   useEffect(() => {
-    if (mainAppInfo.container) {
+    if (mainAppInfo?.container) {
       // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
         axios.defaults.headers.common.Authorization = `Bearer ${value}`;

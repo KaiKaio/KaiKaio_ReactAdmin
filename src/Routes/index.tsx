@@ -17,11 +17,22 @@ const Login = loadable(() => import('../view/Login/loginPage'));
 const BillChart = loadable(() => import('../view/BillChart/BillChart'));
 const Bookkeeping = loadable(() => import('../view/Bookkeeping'));
 
+const TransitionWrapper: React.FC<any> = ({ children, ...props }) => {
+  const nodeRef = React.useRef(null);
+  return (
+    <CSSTransition {...props} nodeRef={nodeRef}>
+      <div ref={nodeRef} className="route-transition-node">
+        {children}
+      </div>
+    </CSSTransition>
+  );
+};
+
 const AppRoutes: React.FC = () => {
   const location = useLocation();
   return (
     <TransitionGroup className="router-wrapper">
-      <CSSTransition
+      <TransitionWrapper
         classNames="fade"
         appear
         key={location.pathname}
@@ -38,7 +49,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/Bill-chart" element={<BillChart />} />
           <Route path="/bookkeeping" element={<Bookkeeping />} />
         </Routes>
-      </CSSTransition>
+      </TransitionWrapper>
     </TransitionGroup>
   );
 };
