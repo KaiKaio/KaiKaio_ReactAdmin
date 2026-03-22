@@ -14,7 +14,21 @@ import Header from 'src/components/Header';
 import axios from 'src/config/fetchInstance';
 import billService from 'src/config/BillService';
 
-const globalReducer = (state: any, action: any) => {
+export interface GlobalState {
+  loginStatus: boolean;
+  token: string;
+}
+
+export type GlobalAction =
+  | { type: 'handleLoginStatus'; payload: boolean }
+  | { type: 'setToken'; payload: string };
+
+export interface GlobalContextType {
+  state: GlobalState;
+  dispatch: React.Dispatch<GlobalAction>;
+}
+
+const globalReducer = (state: GlobalState, action: GlobalAction): GlobalState => {
   switch (action.type) {
     case 'handleLoginStatus':
       return {
@@ -32,18 +46,15 @@ const globalReducer = (state: any, action: any) => {
 };
 
 interface IProps extends HTMLAttributes<HTMLAnchorElement> {
-  mainAppInfo: {
-    container: HTMLElement;
-    onGlobalStateChange: any;
-  };
+  mainAppInfo?: any;
 }
 
-export const globalContext: any = createContext([]);
+export const globalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
 const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
   const [initializing, setInitializing] = useState(true);
 
-  const globalState = {
+  const globalState: GlobalState = {
     loginStatus: false,
     token: '',
   };
@@ -57,15 +68,13 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         {
           msg: 'token received',
         },
-        // 'https://sso.kaikaio.com/',
-        // 'http://localhost:3000/',
-        process.env.REACT_APP_SSO_URL || '/',
+        import.meta.env.VITE_SSO_URL || '/',
       );
     }
   };
 
   useEffect(() => {
-    if (mainAppInfo.container) {
+    if (mainAppInfo?.container) {
       // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
         axios.defaults.headers.common.Authorization = `Bearer ${value}`;
@@ -127,7 +136,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
 
   return (
     <globalContext.Provider value={{ state, dispatch }}>
-      <Router basename={window.__POWERED_BY_QIANKUN__ ? '/react16' : '/'}>
+      <Router>
         <Aside />
         <Header />
         <div id="main">

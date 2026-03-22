@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_URL,
+  baseURL: import.meta.env.VITE_URL,
   timeout: 10000,
 });
 

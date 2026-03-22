@@ -12,7 +12,7 @@ const EditArticle: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [iconLoading, setIconLoading] = React.useState(false);
 
-  const Editor:any = React.useRef();
+  const Editor:any = React.useRef(null);
 
   const editSubmit = () => {
     setLoading(!loading);

@@ -93,7 +93,9 @@ const Home: React.FC = (props: any) => {
                 okText="错的不是我，是这个世界"
                 cancelText="算了，心软了"
               >
-                <span className="delete-button">删除</span>
+                <span className="delete-button">
+                  删除
+                </span>
               </Popconfirm>
               <span
                 role="button"

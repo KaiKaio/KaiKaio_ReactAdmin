@@ -6,14 +6,8 @@ import { fetchBillByMonthly } from 'src/api/Bill';
 
 import './BillChart.scss';
 
-// import { getBackground, addBackground, deleteBackground } from 'src/api/Background';
-
 import { DatePicker } from 'antd';
-import type { RangePickerValue } from 'antd/lib/date-picker/interface';
-
-import moment from 'moment';
-
-// import client from 'src/config/oss-config';
+import dayjs from 'dayjs';
 
 import * as echarts from 'echarts/core';
 import { GridComponent, GridComponentOption, TooltipComponent } from 'echarts/components';
@@ -30,19 +24,17 @@ type EChartsOption = echarts.ComposeOption<
 const { RangePicker } = DatePicker;
 
 const initDateRange = {
-  startDate: moment().subtract(1, 'year'),
-  endDate: moment(),
+  startDate: dayjs().subtract(1, 'year'),
+  endDate: dayjs(),
 };
 
 const BillChart: FC = () => {
-  // const [uploadLoading] = useState(false);
-  // const [backgroundUrl, setBackgroundUrl] = useState({ _id: '' , url: '' });
-
   const chartRef = useRef<HTMLDivElement | null>(null);
   const [startDate, setStartDate] = useState<string>(initDateRange.startDate.format('YYYY-MM'));
   const [endDate, setEndDate] = useState<string>(initDateRange.endDate.format('YYYY-MM'));
 
-  const handleDateChange = (dates: RangePickerValue, dateStrings: [string, string]) => {
+  const handleDateChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null, dateStrings: [string, string]) => {
+    if (!dates) return;
     const [sDate, eDate] = dateStrings;
     setStartDate(sDate);
     setEndDate(eDate);

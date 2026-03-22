@@ -1,8 +1,6 @@
 #bookkeeping {
-  padding: 24px;
   background: #fff;
   min-height: 360px;
-  margin: 24px;
 
   .filter-container {
     margin-bottom: 16px;
@@ -48,9 +46,6 @@
 
 @media screen and (max-width: 768px) {
   #bookkeeping {
-    padding: 12px;
-    margin: 8px;
-
     .filter-container {
       flex-direction: column;
       align-items: flex-start;

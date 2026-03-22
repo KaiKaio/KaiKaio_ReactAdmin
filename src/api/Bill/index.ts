@@ -10,6 +10,5 @@ const fetchBillByMonthly = (params: any) => new Promise((resolve, reject) => {
 });
 
 export {
-  // eslint-disable-next-line import/prefer-default-export
   fetchBillByMonthly,
 };

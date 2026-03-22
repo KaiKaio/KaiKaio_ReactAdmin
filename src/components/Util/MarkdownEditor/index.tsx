@@ -1,7 +1,7 @@
 import React, {
   useState, ForwardRefRenderFunction, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 
 import axios from 'src/config/fetchInstance';
 
@@ -20,7 +20,7 @@ const { confirm } = Modal;
 const MarkdownEditor: ForwardRefRenderFunction<
   HTMLDivElement, {}
 > = (props: any, ref: any) => {
-  const match: any = useRouteMatch();
+  const match: any = useMatch('/editArticle/:id');
 
   const [value, setValue] = useState('');
   const [uploadLoading, setupLoadLoading] = useState(false);
@@ -41,7 +41,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
   }));
 
   useEffect(() => {
-    if (match.params.id) {
+    if (match?.params?.id) {
       axios
         .get(`/Article/?id=${match.params.id}`)
         .then((res) => {
