@@ -10,7 +10,7 @@ import {
   message,
 } from 'antd';
 import { ITypeItem, IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const { Option } = Select;
 
@@ -57,7 +57,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       render: (text: string, record: any, index: number) => (
         <DatePicker
           style={{ width: '100%' }}
-          value={moment(text)}
+          value={text ? dayjs(text) : null}
           onChange={(date, dateString) => handleCellChange(dateString, index, 'date')}
           showTime
           format="YYYY-MM-DD HH:mm"
@@ -132,7 +132,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   return (
     <Drawer
       title="导入账单预览"
-      width={720}
+      size={720}
       onClose={onClose}
       open={visible}
     >

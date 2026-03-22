@@ -41,7 +41,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
   }));
 
   useEffect(() => {
-    if (match.params.id) {
+    if (match?.params?.id) {
       axios
         .get(`/Article/?id=${match.params.id}`)
         .then((res) => {

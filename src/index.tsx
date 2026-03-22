@@ -5,10 +5,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from 'src/App';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 
-moment.locale('zh-cn');
+dayjs.locale('zh-cn');
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
