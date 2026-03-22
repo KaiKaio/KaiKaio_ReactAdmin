@@ -7,12 +7,12 @@ import {
   Input,
   InputNumber,
   Select,
+  Space,
   message,
 } from 'antd';
 import { ITypeItem, IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import dayjs from 'dayjs';
-
-const { Option } = Select;
+import { addBillItem } from 'src/api/Bookkeeping';
 
 interface ImportBillDrawerProps {
   visible: boolean;
@@ -30,20 +30,69 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   onSave,
 }) => {
   const [localData, setLocalData] = useState<Partial<ILocalBillItem>[]>(importData);
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   React.useEffect(() => {
     setLocalData(importData);
   }, [importData]);
 
-  const handleCellChange = (value: any, index: number, field: string) => {
-    const newData = [...localData];
-    newData[index][field] = value;
+  const handleBatchDelete = () => {
+    const newData = localData.filter(item => !selectedRowKeys.includes(item.id as React.Key));
     setLocalData(newData);
+    setSelectedRowKeys([]);
+    message.success('批量删除成功');
+  };
+
+  const handleSelectAll = () => {
+    const allKeys = localData.map(item => item.id as React.Key);
+    setSelectedRowKeys(allKeys);
+  };
+
+  const handleSelectInvert = () => {
+    const allKeys = localData.map(item => item.id as React.Key);
+    const invertKeys = allKeys.filter(key => !selectedRowKeys.includes(key));
+    setSelectedRowKeys(invertKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+    ],
+  };
+
+  const handleCellChange = (value: any, id: React.Key, field: string) => {
+    const newData = [...localData];
+    const targetIndex = newData.findIndex(item => item.id === id);
+    if (targetIndex > -1) {
+      newData[targetIndex] = { ...newData[targetIndex], [field]: value };
+      setLocalData(newData);
+    }
   };
 
   const handleSave = () => {
     // TODO: 验证数据完整性再保存
     // onSave(localData);
+    if (!selectedRowKeys?.length) {
+      message.error('请选择要保存的账单');
+      return;
+    }
+
+    const firstKey = selectedRowKeys[0];
+    const dataItem = localData.find(item => item.id === firstKey);
+
+    addBillItem({
+      date: dataItem?.date || '',
+      type_name: dataItem?.type_name || '',
+      pay_type: dataItem?.pay_type || '1',
+      amount: dataItem?.amount ?? 0,
+      remark: dataItem?.remark || '',
+      type_id: dataItem?.type_id ?? 0,
+    })
+
     message.success('保存成功');
     onClose();
   };
@@ -54,11 +103,11 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       width: 220,
       dataIndex: 'date',
       key: 'date',
-      render: (text: string, record: any, index: number) => (
+      render: (text: string, record: any) => (
         <DatePicker
           style={{ width: '100%' }}
           value={text ? dayjs(text) : null}
-          onChange={(date, dateString) => handleCellChange(dateString, index, 'date')}
+          onChange={(date, dateString) => handleCellChange(dateString, record.id, 'date')}
           showTime
           format="YYYY-MM-DD HH:mm"
         />
@@ -66,20 +115,22 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     },
     {
       title: '类型',
-      dataIndex: 'type_name',
-      key: 'type_name',
+      dataIndex: 'type_id',
+      key: 'type_id',
       width: 160,
-      render: (text: string, record: any, index: number) => (
+      render: (text: number, record: any) => (
         <Select
           style={{ width: '100%' }}
           value={text}
-          onChange={(value: string) => handleCellChange(value, index, 'type_name')}
+          options={typeList.map(item => ({
+            label: item.name,
+            value: item.id,
+          }))}
+          onChange={(value: number) => {
+            handleCellChange(value, record.id, 'type_id')
+            handleCellChange(typeList.find(item => item.id === value)?.name || '', record.id, 'type_name')
+          }}
         >
-          {typeList.map(item => (
-            <Option key={`${item.id}`} value={`${item.id}`}>
-              {item.name}
-            </Option>
-          ))}
         </Select>
       ),
     },
@@ -88,18 +139,22 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       width: 160,
       dataIndex: 'pay_type',
       key: 'pay_type',
-      render: (text: string, record: any, index: number) => (
+      render: (text: string, record: any) => (
         <Select
           value={text}
-          onChange={(val: any) => handleCellChange(val, index, 'pay_type')}
+          onChange={(val: any) => handleCellChange(val, record.id, 'pay_type')}
           style={{ width: 80 }}
+          options={[
+            {
+              label: '支出',
+              value: '1',
+            },
+            {
+              label: '收入',
+              value: '2',
+            },
+          ]}
         >
-          <Option value="1">
-            支出
-          </Option>
-          <Option value="2">
-            收入
-          </Option>
         </Select>
       ),
     },
@@ -108,10 +163,10 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       width: 160,
       dataIndex: 'amount',
       key: 'amount',
-      render: (text: number, record: any, index: number) => (
+      render: (text: number, record: any) => (
         <InputNumber
           value={text}
-          onChange={val => handleCellChange(val, index, 'amount')}
+          onChange={val => handleCellChange(val, record.id, 'amount')}
         />
       ),
     },
@@ -120,10 +175,10 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       width: 160,
       dataIndex: 'remark',
       key: 'remark',
-      render: (text: string, record: any, index: number) => (
+      render: (text: string, record: any) => (
         <Input
           value={text}
-          onChange={e => handleCellChange(e.target.value, index, 'remark')}
+          onChange={e => handleCellChange(e.target.value, record.id, 'remark')}
         />
       ),
     },
@@ -136,11 +191,34 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       onClose={onClose}
       open={visible}
     >
+      <Space style={{ marginBottom: 16 }}>
+        <Button 
+          type="primary" 
+          danger 
+          onClick={handleBatchDelete} 
+          disabled={selectedRowKeys.length === 0}
+        >
+          批量删除
+        </Button>
+        <Button onClick={handleSelectAll}>
+          全选
+        </Button>
+        <Button onClick={handleSelectInvert}>
+          反选
+        </Button>
+      </Space>
+
       <Table
+        rowSelection={rowSelection}
         scroll={{ y: 460, x: 720 }}
         dataSource={localData}
         columns={importColumns}
-        pagination={false}
+        pagination={{
+          defaultPageSize: 15,
+          showSizeChanger: true,
+          pageSizeOptions: ['15', '30', '50', '100'],
+          showTotal: total => `共 ${total} 条数据`,
+        }}
         rowKey="id"
       />
       <div

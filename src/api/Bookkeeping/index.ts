@@ -33,7 +33,14 @@ const getBillTypeList: () => Promise<{
   }
 }> = () => axios.get('/type/list');
 
+const addBillItem = (data: Omit<IBillItem, 'id'>): Promise<{
+  'code': number,
+  'msg': string,
+  'data': null
+}> => axios.post('/bill/add', data);
+
 export {
+  addBillItem,
   getBillList,
   getBillTypeList,
 };
