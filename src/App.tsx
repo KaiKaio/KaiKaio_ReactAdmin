@@ -14,7 +14,21 @@ import Header from 'src/components/Header';
 import axios from 'src/config/fetchInstance';
 import billService from 'src/config/BillService';
 
-const globalReducer = (state: any, action: any) => {
+export interface GlobalState {
+  loginStatus: boolean;
+  token: string;
+}
+
+export type GlobalAction =
+  | { type: 'handleLoginStatus'; payload: boolean }
+  | { type: 'setToken'; payload: string };
+
+export interface GlobalContextType {
+  state: GlobalState;
+  dispatch: React.Dispatch<GlobalAction>;
+}
+
+const globalReducer = (state: GlobalState, action: GlobalAction): GlobalState => {
   switch (action.type) {
     case 'handleLoginStatus':
       return {
@@ -35,12 +49,12 @@ interface IProps extends HTMLAttributes<HTMLAnchorElement> {
   mainAppInfo?: any;
 }
 
-export const globalContext: any = createContext([]);
+export const globalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
 const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
   const [initializing, setInitializing] = useState(true);
 
-  const globalState = {
+  const globalState: GlobalState = {
     loginStatus: false,
     token: '',
   };

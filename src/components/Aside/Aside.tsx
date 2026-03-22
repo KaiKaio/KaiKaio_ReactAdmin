@@ -14,7 +14,7 @@ const Aside: React.FC = () => {
   const REACT_SSO_URL = import.meta.env.VITE_SSO_URL || '/';
   const location: any = useLocation();
 
-  const GlobalContext: any = React.useContext(globalContext);
+  const GlobalContext = React.useContext(globalContext);
   
   const navRef = React.useRef(null);
   const loginRef = React.useRef(null);

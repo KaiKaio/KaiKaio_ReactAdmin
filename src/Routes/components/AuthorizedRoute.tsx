@@ -1,16 +1,11 @@
 import React, { useContext } from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { globalContext } from 'src/App';
 
-interface IProps {
-  component: React.ComponentType<any>;
-  path: string;
-}
-
-const AuthorizedRoute: React.FC<IProps> = ({ component: Component, path }: IProps) => {
-  const GlobalContext: any = useContext(globalContext);
+const AuthorizedRoute: React.FC = () => {
+  const GlobalContext = useContext(globalContext);
   return GlobalContext.state.loginStatus ? (
-    <Route path={path} element={<Component />} />
+    <Outlet />
   ) : (
     <Navigate to="/login" replace />
   );

@@ -6,7 +6,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import loadable from 'src/utils/loadable';
 
-// import AuthorizedRoute from 'src/Routes/components/AuthorizedRoute';
+import AuthorizedRoute from 'src/Routes/components/AuthorizedRoute';
 
 const Home = loadable(() => import('../view/Home'));
 const Create = loadable(() => import('../view/Create'));
@@ -41,13 +41,15 @@ const AppRoutes: React.FC = () => {
       >
         <Routes location={location}>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/create" element={<Create />} />
-          <Route path="/editArticle/:id" element={<EditArticle />} />
-          <Route path="/music" element={<Music />} />
-          <Route path="/background" element={<Background />} />
-          <Route path="/Bill-chart" element={<BillChart />} />
-          <Route path="/bookkeeping" element={<Bookkeeping />} />
+          <Route element={<AuthorizedRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/editArticle/:id" element={<EditArticle />} />
+            <Route path="/music" element={<Music />} />
+            <Route path="/background" element={<Background />} />
+            <Route path="/Bill-chart" element={<BillChart />} />
+            <Route path="/bookkeeping" element={<Bookkeeping />} />
+          </Route>
         </Routes>
       </TransitionWrapper>
     </TransitionGroup>
