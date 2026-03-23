@@ -13,8 +13,6 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  // 一个配置文件可以被基础配置中的已启用的规则继承。
-  extends: ['plugin:react/recommended'], // 'airbnb' temporarily disabled for build
   // 自定义全局变量
   globals: {
     document: true,
