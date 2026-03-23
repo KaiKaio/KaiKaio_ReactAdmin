@@ -64,13 +64,15 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     ],
   };
 
-  const handleCellChange = (value: any, id: React.Key, field: string) => {
-    const newData = [...localData];
-    const targetIndex = newData.findIndex(item => item.id === id);
-    if (targetIndex > -1) {
-      newData[targetIndex] = { ...newData[targetIndex], [field]: value };
-      setLocalData(newData);
-    }
+  const handleCellChange = (value: string | number | undefined | null, id: React.Key, field: string) => {
+    setLocalData((prevData) => {
+      const newData = [...prevData];
+      const targetIndex = newData.findIndex(item => item.id === id);
+      if (targetIndex > -1) {
+        newData[targetIndex] = { ...newData[targetIndex], [field]: value };
+      }
+      return newData;
+    });
   };
 
   const handleSave = () => {
@@ -98,7 +100,12 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
 
     // Call the batch API
     batchAddBillItems(payload)
-      .then(() => {
+      .then((res) => {
+        const { code } = res;
+        if (code !== 200) {
+          message.error('保存失败');
+          return;
+        }
         message.success('保存成功');
         onClose();
       })
