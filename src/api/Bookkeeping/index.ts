@@ -39,8 +39,15 @@ const addBillItem = (data: Omit<IBillItem, 'id'>): Promise<{
   'data': null
 }> => axios.post('/bill/add', data);
 
+const batchAddBillItems = (data: Omit<IBillItem, 'id'>[]): Promise<{
+  'code': number,
+  'msg': string,
+  'data': null
+}> => axios.post('/bill/batchAdd', data);
+
 export {
   addBillItem,
+  batchAddBillItems,
   getBillList,
   getBillTypeList,
 };

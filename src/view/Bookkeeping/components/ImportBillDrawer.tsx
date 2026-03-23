@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { ITypeItem, IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import dayjs from 'dayjs';
-import { addBillItem } from 'src/api/Bookkeeping';
+import { batchAddBillItems } from 'src/api/Bookkeeping';
 
 interface ImportBillDrawerProps {
   visible: boolean;
@@ -81,20 +81,30 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       return;
     }
 
-    const firstKey = selectedRowKeys[0];
-    const dataItem = localData.find(item => item.id === firstKey);
+    // Get all selected data items
+    const selectedData = selectedRowKeys
+      .map(key => localData.find(item => item.id === key))
+      .filter(Boolean); // Filter out any undefined items
 
-    addBillItem({
-      date: dataItem?.date || '',
-      type_name: dataItem?.type_name || '',
-      pay_type: dataItem?.pay_type || '1',
-      amount: dataItem?.amount ?? 0,
-      remark: dataItem?.remark || '',
-      type_id: dataItem?.type_id ?? 0,
-    })
+    // Build the payload for batch add
+    const payload = selectedData.map(item => ({
+      date: item?.date || '',
+      type_name: item?.type_name || '',
+      pay_type: item?.pay_type || '1',
+      amount: item?.amount ?? 0,
+      remark: item?.remark || '',
+      type_id: item?.type_id ?? 0,
+    }));
 
-    message.success('保存成功');
-    onClose();
+    // Call the batch API
+    batchAddBillItems(payload)
+      .then(() => {
+        message.success('保存成功');
+        onClose();
+      })
+      .catch(() => {
+        message.error('保存失败');
+      });
   };
 
   const importColumns = [
