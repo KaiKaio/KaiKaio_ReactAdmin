@@ -52,7 +52,8 @@ const BillChart: FC = () => {
     fetchBillByMonthly({
       startMonth: startDate,
       endMonth: endDate,
-    }).then((data:any = []) => {
+    }).then((res) => {
+      const { data } = res;
       // 定义图表配置项
       const option: EChartsOption = {
         tooltip: {

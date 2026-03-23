@@ -1,14 +1,15 @@
 import axios from 'src/config/BillService';
+import { BillByMonthlyReq, BillByMonthlyItem } from 'src/type/Bookkeeping';
 
-const fetchBillByMonthly = (params: any) => new Promise((resolve, reject) => {
-  axios.get('/bill/queyBillByMonthly', { params }).then((res:any) => {
-    const { data } = res.data;
-    resolve(data);
-  }).catch((err) => {
-    reject(err);
-  });
-});
+
+const fetchBillByMonthly = (params: BillByMonthlyReq): Promise<{
+  'code': number,
+  'msg': string,
+  'data': BillByMonthlyItem[]
+}> => axios.get('/bill/queyBillByMonthly', { params });
 
 export {
   fetchBillByMonthly,
 };
+
+
