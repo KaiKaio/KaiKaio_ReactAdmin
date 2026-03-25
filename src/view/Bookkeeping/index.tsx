@@ -52,6 +52,9 @@ const Bookkeeping: React.FC = () => {
         const rawAmount: string = item['金额(元)'];
         const amount = rawAmount.toString().replace(/[¥,]/g, '');
 
+        const counterpartyOrigin: string = item['交易对方'];
+        const counterparty = counterpartyOrigin || '-';
+
         // Remark handling （微信的商品字段适合备注）
         const remark: string = item['商品'];
 
@@ -59,8 +62,10 @@ const Bookkeeping: React.FC = () => {
           id: index,
           key: index,
           date,
-          originTypeName: typeName, // 数据源的交易类型
+
+          originTypeName: typeName, // Wx -数据源的交易类型
           type_name: '', // 需要用户自己选择类型
+          counterparty, // Wx - 数据源的交易对方
           pay_type: payType,
           amount,
           remark,
@@ -213,7 +218,6 @@ const Bookkeeping: React.FC = () => {
           </span>
         </div>
         <div className="upload-wrapper">
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <Upload {...uploadProps}>
             <Button icon={<UploadOutlined />}>
               导入账单
@@ -237,7 +241,8 @@ const Bookkeeping: React.FC = () => {
         importData={importData}
         onClose={() => setDrawerVisible(false)}
         onSave={() => {
-          setDrawerVisible(false);
+          setDrawerVisible(false)
+          fetchBillList(pagination.current, pagination.pageSize)
         }}
       />
     </div>

@@ -10,16 +10,17 @@ import {
   Space,
   message,
 } from 'antd';
-import { ITypeItem, IBillItem, ILocalBillItem } from 'src/type/Bookkeeping';
+import { ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import dayjs from 'dayjs';
 import { batchAddBillItems } from 'src/api/Bookkeeping';
+import './ImportBillDrawer.scss';
 
 interface ImportBillDrawerProps {
   visible: boolean;
   typeList: ITypeItem[];
   importData: Partial<ILocalBillItem>[];
   onClose: () => void;
-  onSave: (data: IBillItem[]) => void;
+  onSave: () => void;
 }
 
 const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
@@ -76,8 +77,6 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   };
 
   const handleSave = () => {
-    // TODO: 验证数据完整性再保存
-    // onSave(localData);
     if (!selectedRowKeys?.length) {
       message.error('请选择要保存的账单');
       return;
@@ -107,7 +106,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
           return;
         }
         message.success('保存成功');
-        onClose();
+        onSave();
       })
       .catch(() => {
         message.error('保存失败');
@@ -122,7 +121,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       key: 'date',
       render: (text: string, record: any) => (
         <DatePicker
-          style={{ width: '100%' }}
+          className="ibd-full-width"
           value={text ? dayjs(text) : null}
           onChange={(date, dateString) => handleCellChange(dateString, record.id, 'date')}
           showTime
@@ -137,8 +136,9 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       width: 160,
       render: (text: number, record: any) => (
         <Select
-          style={{ width: '100%' }}
+          className="ibd-full-width"
           value={text}
+          showSearch={{ optionFilterProp: 'label' }}
           options={typeList.map(item => ({
             label: item.name,
             value: item.id,
@@ -160,7 +160,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
         <Select
           value={text}
           onChange={(val: any) => handleCellChange(val, record.id, 'pay_type')}
-          style={{ width: 80 }}
+          className="ibd-select-pay-type"
           options={[
             {
               label: '支出',
@@ -208,7 +208,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       onClose={onClose}
       open={visible}
     >
-      <Space style={{ marginBottom: 16 }}>
+      <Space className="ibd-button-group">
         <Button 
           type="primary" 
           danger 
@@ -227,6 +227,21 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
 
       <Table
         rowSelection={rowSelection}
+        expandable={{
+          expandedRowRender: record => (<Space>
+            <span>
+              源类型:
+              {record.originTypeName || '-'}
+            </span>
+            <span> 
+              {'/'}
+            </span>
+            <span>
+              交易对方:
+              {record.counterparty || '-'}
+            </span>
+          </Space>),
+        }}
         scroll={{ y: 460, x: 720 }}
         dataSource={localData}
         columns={importColumns}
@@ -238,19 +253,8 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
         }}
         rowKey="id"
       />
-      <div
-        style={{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-        }}
-      >
-        <Button onClick={onClose} style={{ marginRight: 8 }}>
+      <div className='ibd-footer'>
+        <Button onClick={onClose} className='btn-cancel'>
           取消
         </Button>
         <Button onClick={handleSave} type="primary">
