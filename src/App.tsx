@@ -54,6 +54,10 @@ export const globalContext = createContext<GlobalContextType>({} as GlobalContex
 const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
   const [initializing, setInitializing] = useState(true);
 
+  // 最小loading时长，防止初始化太快导致闪动
+  const MIN_LOADING_TIME = 500;
+  const loadingStartRef = React.useRef<number>(Date.now());
+
   const globalState: GlobalState = {
     loginStatus: false,
     token: '',
@@ -74,6 +78,14 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
   };
 
   useEffect(() => {
+    const finishInitializing = () => {
+      const elapsed = Date.now() - loadingStartRef.current;
+      const delay = Math.max(0, MIN_LOADING_TIME - elapsed);
+      window.setTimeout(() => {
+        setInitializing(false);
+      }, delay);
+    };
+
     if (mainAppInfo?.container) {
       // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
@@ -81,7 +93,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         billService.defaults.headers.common.Authorization = `${value}`;
         dispatch({ type: 'setToken', payload: value });
         dispatch({ type: 'handleLoginStatus', payload: true });
-        setInitializing(false);
+        finishInitializing();
       }, true);
       return;
     }
@@ -106,7 +118,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         console.error(err, ' => 登录失败');
       })
       .finally(() => {
-        setInitializing(false);
+        finishInitializing();
       });
 
     // // TODO 临时使用
@@ -114,7 +126,7 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
     // dispatch({ type: 'handleLoginStatus', payload: true });
     // window.removeEventListener('message', listenSetToken);
 
-    // eslint-disable-next-line consistent-return
+     
     return () => {
       window.removeEventListener('message', listenSetToken);
     };
@@ -122,14 +134,15 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
 
   if (initializing) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-      }}
-      >
-        Loading...
+      <div className="app-loading">
+        <div className="loader">
+          <div className="dot" />
+          <div className="dot" />
+          <div className="dot" />
+        </div>
+        <div className="loading-text">
+          Welcome Kaikaio Admin
+        </div>
       </div>
     );
   }
