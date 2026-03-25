@@ -1,7 +1,7 @@
 export interface IBillItem {
   id: number;
   date: string;
-  'type_id': number;
+  'type_id': string;
   'type_name': string;
   'pay_type': '1' | '2';
   amount: string | number;
