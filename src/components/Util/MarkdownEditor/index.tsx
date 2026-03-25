@@ -1,7 +1,7 @@
 import React, {
   useState, ForwardRefRenderFunction, forwardRef, useRef, useImperativeHandle, useEffect,
 } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 
 import axios from 'src/config/fetchInstance';
 
@@ -11,7 +11,9 @@ import {
 
 import client from 'src/config/oss-config';
 
-import Editor from 'for-editor';
+import Editor from 'react-markdown-editor-lite';
+import ReactMarkdown from 'react-markdown';
+import 'react-markdown-editor-lite/lib/index.css';
 
 import './index.scss';
 
@@ -20,7 +22,7 @@ const { confirm } = Modal;
 const MarkdownEditor: ForwardRefRenderFunction<
   HTMLDivElement, {}
 > = (props: any, ref: any) => {
-  const match: any = useRouteMatch();
+  const match: any = useMatch('/editArticle/:id');
 
   const [value, setValue] = useState('');
   const [uploadLoading, setupLoadLoading] = useState(false);
@@ -29,7 +31,6 @@ const MarkdownEditor: ForwardRefRenderFunction<
   const [description, setDescription] = useState('');
   const [id, setId] = useState('');
 
-  const MEditor: any = useRef(null);
   const inputFile: any = useRef(null);
 
   useImperativeHandle(ref, () => ({
@@ -41,7 +42,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
   }));
 
   useEffect(() => {
-    if (match.params.id) {
+    if (match?.params?.id) {
       axios
         .get(`/Article/?id=${match.params.id}`)
         .then((res) => {
@@ -56,7 +57,7 @@ const MarkdownEditor: ForwardRefRenderFunction<
           console.error(err, '请求错误');
         });
     }
-  }, [match.params.id]);
+  }, [match?.params?.id]);
 
   const handleUpload = () => {
     if (coverUrl === '' || coverUrl === null) {
@@ -92,19 +93,16 @@ const MarkdownEditor: ForwardRefRenderFunction<
     setValue(aValue);
   };
 
-  const addImg = ($file: any) => {
-    const storeAs = `markdowmImg/${$file.name}`;
+  const addImg = (file: File, callback: (url: string) => void) => {
+    const storeAs = `markdowmImg/${file.name}`;
     client
-      .multipartUpload(storeAs, $file, {})
+      .multipartUpload(storeAs, file, {})
       .then((res: any) => {
-        // 上传
         let str = res.res.requestUrls[0];
-        if (str.indexOf('?uploadId') === -1) {
-          MEditor.current.$img2Url($file.name, str);
-        } else {
+        if (str.indexOf('?uploadId') !== -1) {
           str = str.substring(0, str.indexOf('?uploadId'));
-          MEditor.current.$img2Url($file.name, str);
         }
+        callback(str);
       })
       .catch((err: any) => {
         console.error('上传失败：', err);
@@ -188,10 +186,12 @@ const MarkdownEditor: ForwardRefRenderFunction<
           </Form.Item>
 
           <Editor
-            ref={MEditor}
             value={value}
-            addImg={$file => addImg($file)}
-            onChange={Arvalue => handleChange(Arvalue)}
+            onChange={({ text }) => handleChange(text)}
+            onImageUpload={addImg}
+            renderHTML={text => (<ReactMarkdown>
+              {text}
+            </ReactMarkdown>)}
           />
         </Form>
       </div>

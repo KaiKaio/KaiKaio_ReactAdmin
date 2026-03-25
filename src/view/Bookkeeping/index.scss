@@ -1,0 +1,97 @@
+#bookkeeping {
+  background: #fff;
+  min-height: 360px;
+
+  .filter-container {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .left-filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .total-stat {
+        margin-left: 20px;
+        font-size: 16px;
+
+        .stat-item {
+          margin-right: 16px;
+
+          .expense {
+            color: #f5222d;
+            font-weight: bold;
+            margin-left: 4px;
+          }
+
+          .income {
+            color: #52c41a;
+            font-weight: bold;
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+  }
+
+  .table-container {
+    background-color: #fff;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #bookkeeping {
+    .filter-container {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .left-filters {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .total-stat {
+          margin-left: 0;
+          margin-top: 8px;
+          font-size: 14px;
+
+          .stat-item {
+            margin-right: 12px;
+          }
+        }
+      }
+
+      .upload-wrapper {
+        width: 100%;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #bookkeeping {
+    .filter-container {
+      .left-filters {
+        .total-stat {
+          font-size: 13px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .stat-item {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 #header {
-  width: 82%;
-  margin-left: auto;
+  width: calc(100% - 260px);
+  margin-left: 260px;
   height: 5rem;
   border-bottom: 0.1rem solid #ccc;
   display: flex;

@@ -177,7 +177,7 @@ const Music: React.FC = () => {
             onRow={(record, index) => ({
               index,
               moveRow,
-            })}
+            } as any)}
           >
             <Table.Column<IMusicList>
               key="albumart"
@@ -213,7 +213,9 @@ const Music: React.FC = () => {
                   okText="那么难听，我就是那么残忍"
                   cancelText="算了，心软了"
                 >
-                  <span className="delete-button">删除</span>
+                  <span className="delete-button">
+                    删除
+                  </span>
                 </Popconfirm>
               )}
             />

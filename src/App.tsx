@@ -4,6 +4,7 @@ import React, {
   createContext,
   HTMLAttributes,
   useReducer,
+  useState,
 } from 'react';
 import './App.scss';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -13,7 +14,21 @@ import Header from 'src/components/Header';
 import axios from 'src/config/fetchInstance';
 import billService from 'src/config/BillService';
 
-const globalReducer = (state: any, action: any) => {
+export interface GlobalState {
+  loginStatus: boolean;
+  token: string;
+}
+
+export type GlobalAction =
+  | { type: 'handleLoginStatus'; payload: boolean }
+  | { type: 'setToken'; payload: string };
+
+export interface GlobalContextType {
+  state: GlobalState;
+  dispatch: React.Dispatch<GlobalAction>;
+}
+
+const globalReducer = (state: GlobalState, action: GlobalAction): GlobalState => {
   switch (action.type) {
     case 'handleLoginStatus':
       return {
@@ -31,16 +46,19 @@ const globalReducer = (state: any, action: any) => {
 };
 
 interface IProps extends HTMLAttributes<HTMLAnchorElement> {
-  mainAppInfo: {
-    container: HTMLElement;
-    onGlobalStateChange: any;
-  };
+  mainAppInfo?: any;
 }
 
-export const globalContext: any = createContext([]);
+export const globalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
 const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
-  const globalState = {
+  const [initializing, setInitializing] = useState(true);
+
+  // 最小loading时长，防止初始化太快导致闪动
+  const MIN_LOADING_TIME = 500;
+  const loadingStartRef = React.useRef<number>(Date.now());
+
+  const globalState: GlobalState = {
     loginStatus: false,
     token: '',
   };
@@ -54,21 +72,28 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
         {
           msg: 'token received',
         },
-        // 'https://sso.kaikaio.com/',
-        // 'http://localhost:3000/',
-        process.env.REACT_APP_SSO_URL || '/',
+        import.meta.env.VITE_SSO_URL || '/',
       );
     }
   };
 
   useEffect(() => {
-    if (mainAppInfo.container) {
+    const finishInitializing = () => {
+      const elapsed = Date.now() - loadingStartRef.current;
+      const delay = Math.max(0, MIN_LOADING_TIME - elapsed);
+      window.setTimeout(() => {
+        setInitializing(false);
+      }, delay);
+    };
+
+    if (mainAppInfo?.container) {
       // 基座内运行时
       mainAppInfo.onGlobalStateChange((value: string) => {
         axios.defaults.headers.common.Authorization = `Bearer ${value}`;
         billService.defaults.headers.common.Authorization = `${value}`;
         dispatch({ type: 'setToken', payload: value });
         dispatch({ type: 'handleLoginStatus', payload: true });
+        finishInitializing();
       }, true);
       return;
     }
@@ -91,6 +116,9 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
       })
       .catch((err) => {
         console.error(err, ' => 登录失败');
+      })
+      .finally(() => {
+        finishInitializing();
       });
 
     // // TODO 临时使用
@@ -98,15 +126,30 @@ const App: FC<IProps> = ({ mainAppInfo }: IProps) => {
     // dispatch({ type: 'handleLoginStatus', payload: true });
     // window.removeEventListener('message', listenSetToken);
 
-    // eslint-disable-next-line consistent-return
+     
     return () => {
       window.removeEventListener('message', listenSetToken);
     };
   }, []);
 
+  if (initializing) {
+    return (
+      <div className="app-loading">
+        <div className="loader">
+          <div className="dot" />
+          <div className="dot" />
+          <div className="dot" />
+        </div>
+        <div className="loading-text">
+          Welcome Kaikaio Admin
+        </div>
+      </div>
+    );
+  }
+
   return (
     <globalContext.Provider value={{ state, dispatch }}>
-      <Router basename={window.__POWERED_BY_QIANKUN__ ? '/react16' : '/'}>
+      <Router>
         <Aside />
         <Header />
         <div id="main">

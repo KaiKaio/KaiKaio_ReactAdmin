@@ -11,16 +11,20 @@ import { globalContext } from 'src/App';
 import './index.scss';
 
 const Aside: React.FC = () => {
-  const REACT_SSO_URL = process.env.REACT_APP_SSO_URL || '/';
+  const REACT_SSO_URL = import.meta.env.VITE_SSO_URL || '/';
   const location: any = useLocation();
 
-  const GlobalContext: any = React.useContext(globalContext);
+  const GlobalContext = React.useContext(globalContext);
+  
+  const navRef = React.useRef(null);
+  const loginRef = React.useRef(null);
 
   const [nav] = React.useState([
     { name: '新建文章', path: '/create' },
     { name: '文章管理', path: '/' },
     { name: '音乐管理', path: '/music' },
     { name: '背景管理', path: '/background' },
+    { name: '记账', path: '/bookkeeping' },
     { name: '账单统计', path: '/bill-chart' },
   ]);
 
@@ -48,7 +52,9 @@ const Aside: React.FC = () => {
         <svg className="icon" aria-hidden="true">
           <use xlinkHref="#icon-cat" />
         </svg>
-        <span>KaiKaio</span>
+        <span>
+          KaiKaio
+        </span>
       </div>
 
       <CSSTransition
@@ -56,8 +62,9 @@ const Aside: React.FC = () => {
         timeout={1500}
         in={GlobalContext.state.loginStatus}
         unmountOnExit
+        nodeRef={navRef}
       >
-        <div className="nav-wrapper">
+        <div className="nav-wrapper" ref={navRef}>
           {renderNav}
           <div
             aria-hidden="true"
@@ -76,14 +83,17 @@ const Aside: React.FC = () => {
         timeout={1500}
         in={!GlobalContext.state.loginStatus}
         unmountOnExit
+        nodeRef={loginRef}
       >
-        <div className="login-wrapper">
+        <div className="login-wrapper" ref={loginRef}>
           <Button
             className="submit-bottom"
             type="primary"
           >
             {/* <a href="https://sso.kaikaio.com/">登录</a> */}
-            <a href={REACT_SSO_URL}>登录</a>
+            <a href={REACT_SSO_URL}>
+              登录
+            </a>
           </Button>
         </div>
       </CSSTransition>

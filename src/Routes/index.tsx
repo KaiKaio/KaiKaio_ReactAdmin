@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  useLocation, Route, Switch,
+  useLocation, Route, Routes,
 } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -15,30 +15,45 @@ const EditArticle = loadable(() => import('../view/EditArticle'));
 const Background = loadable(() => import('../view/Background'));
 const Login = loadable(() => import('../view/Login/loginPage'));
 const BillChart = loadable(() => import('../view/BillChart/BillChart'));
+const Bookkeeping = loadable(() => import('../view/Bookkeeping'));
 
-const Routes: React.FC = () => {
+const TransitionWrapper: React.FC<any> = ({ children, ...props }) => {
+  const nodeRef = React.useRef(null);
+  return (
+    <CSSTransition {...props} nodeRef={nodeRef}>
+      <div ref={nodeRef} className="route-transition-node">
+        {children}
+      </div>
+    </CSSTransition>
+  );
+};
+
+const AppRoutes: React.FC = () => {
   const location = useLocation();
   return (
     <TransitionGroup className="router-wrapper">
-      <CSSTransition
+      <TransitionWrapper
         classNames="fade"
         appear
         key={location.pathname}
         timeout={1500}
         unmountOnExit
       >
-        <Switch location={location}>
-          <Route path="/login" component={Login} />
-          <AuthorizedRoute path="/" component={Home} exact />
-          <AuthorizedRoute path="/create" component={Create} />
-          <AuthorizedRoute path="/editArticle/:id" component={EditArticle} />
-          <AuthorizedRoute path="/music" component={Music} />
-          <AuthorizedRoute path="/background" component={Background} />
-          <AuthorizedRoute path="/Bill-chart" component={BillChart} />
-        </Switch>
-      </CSSTransition>
+        <Routes location={location}>
+          <Route path="/login" element={<Login />} />
+          <Route element={<AuthorizedRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/editArticle/:id" element={<EditArticle />} />
+            <Route path="/music" element={<Music />} />
+            <Route path="/background" element={<Background />} />
+            <Route path="/Bill-chart" element={<BillChart />} />
+            <Route path="/bookkeeping" element={<Bookkeeping />} />
+          </Route>
+        </Routes>
+      </TransitionWrapper>
     </TransitionGroup>
   );
 };
 
-export default Routes;
+export default AppRoutes;

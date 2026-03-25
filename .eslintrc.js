@@ -13,8 +13,6 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  // 一个配置文件可以被基础配置中的已启用的规则继承。
-  extends: ['plugin:react/recommended', 'airbnb'],
   // 自定义全局变量
   globals: {
     document: true,
@@ -35,9 +33,6 @@ module.exports = {
   plugins: ['react', '@typescript-eslint'],
   rules: {
     'linebreak-style': [0, 'error', 'window'],
-    'import/extensions': ['error', 'ignorePackages', {
-      js: 'never', jsx: 'never', ts: 'never', tsx: 'never',
-    }],
     // React内优先使用解构语法
     'react/destructuring-assignment': ['error', 'always'],
     // 强制将无状态React组件编写为纯函数
@@ -95,9 +90,6 @@ module.exports = {
         allow: ['error'], // 是个字符串数组，包含允许使用的console 对象的方法
       },
     ],
-    // JSX - Label标签相关
-    'jsx-a11y/label-has-associated-control': 'warn',
-    'jsx-a11y/label-has-for': 'warn',
 
     // 禁止未使用过的表达式
     'no-unused-expressions': [
@@ -200,19 +192,10 @@ module.exports = {
         ],
       },
     ],
-    'no-underscore-dangle': [
-      'error',
-      {
-        allow: ['_id', '__POWERED_BY_QIANKUN__'],
-      },
-    ],
   },
   overrides: [
     {
-      files: ['config-overrides.js'],
-      rules: {
-        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-      },
+      files: ['config-overrides.js']
     },
   ],
 };

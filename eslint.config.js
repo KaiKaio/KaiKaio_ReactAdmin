@@ -1,0 +1,111 @@
+module.exports = [
+  {
+    ignores: [
+      "build/**",
+      "config/**",
+      "docs/**",
+      "node_modules/**",
+      "public/**",
+      "scripts/**",
+      "mock/**",
+      "package.json",
+      "umi",
+      ".umi-production",
+      "src/serviceWorker.ts",
+      "src/utils/tools/ramda.js",
+    ],
+  },
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      parser: require("@typescript-eslint/parser"),
+      parserOptions: {
+        ecmaVersion: 12,
+        sourceType: "module",
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        document: "readonly",
+        navigator: "readonly",
+        fetch: "readonly",
+        FormData: "readonly",
+        sessionStorage: "readonly",
+        localStorage: "readonly",
+      },
+    },
+    plugins: {
+      react: require("eslint-plugin-react"),
+      "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+    },
+    settings: {
+      "import/resolver": {
+        node: {
+          paths: ["src"],
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+          moduleDirectory: ["node_modules", "./"],
+        },
+      },
+      react: {
+        version: "detect",
+      },
+    },
+    rules: {
+      "linebreak-style": [0, "error", "window"],
+      "react/destructuring-assignment": ["error", "always"],
+      "react/prefer-stateless-function": "warn",
+      "react/jsx-no-target-blank": "warn",
+      "no-await-in-loop": "off",
+      "arrow-parens": ["error", "as-needed", { requireForBlockBody: true }],
+      "lines-around-comment": [
+        "error",
+        {
+          beforeBlockComment: true,
+          allowBlockStart: true,
+          allowObjectStart: true,
+          allowArrayStart: true,
+          allowClassStart: true,
+        },
+      ],
+      "no-mixed-operators": "off",
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "LabeledStatement",
+          message:
+            "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.",
+        },
+        {
+          selector: "WithStatement",
+          message:
+            "`with` is disallowed in strict mode because it makes code impossible to predict and optimize.",
+        },
+      ],
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      "default-case": "warn",
+      "no-console": ["error", { allow: ["error"] }],
+      "no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true }],
+      "no-param-reassign": ["error", { props: true }],
+      "no-unused-vars": ["error", { args: "none", varsIgnorePattern: "[wW]indow" }],
+      "no-plusplus": ["warn", { allowForLoopAfterthoughts: true }],
+      "guard-for-in": "off",
+      "react/no-did-update-set-state": "warn",
+      "react/jsx-wrap-multilines": "error",
+      "react/no-deprecated": "error",
+      "react/no-string-refs": "error",
+      "react/no-this-in-sfc": "error",
+      "react/no-direct-mutation-state": "error",
+      "react/no-typos": "error",
+      "react/no-unknown-property": "error",
+      "react/no-unescaped-entities": "error",
+      "react/style-prop-object": "error",
+      "react/jsx-curly-newline": "error",
+      "react/jsx-curly-spacing": ["error", { children: true }],
+      "react/jsx-indent": ["error", 2, { checkAttributes: true, indentLogicalExpressions: true }],
+      "react/jsx-one-expression-per-line": ["error"],
+      "no-shadow": "warn",
+      "no-use-before-define": "off",
+      "@typescript-eslint/no-use-before-define": ["error"],
+      "react/jsx-filename-extension": [2, { extensions: [".js", ".jsx", ".ts", ".tsx"] }],
+    },
+  },
+];
