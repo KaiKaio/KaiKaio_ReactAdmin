@@ -94,7 +94,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       pay_type: item?.pay_type || '1',
       amount: item?.amount ?? 0,
       remark: item?.remark || '',
-      type_id: item?.type_id ?? 0,
+      type_id: item?.type_id ?? '0',
     }));
 
     // Call the batch API
