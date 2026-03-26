@@ -6,7 +6,7 @@ const readExcel = (file: File): Promise<any[]> => new Promise((resolve, reject) 
     const data = e.target?.result;
     if (data) {
       try {
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
@@ -27,7 +27,7 @@ const readExcel = (file: File): Promise<any[]> => new Promise((resolve, reject) 
         }
 
         // Parse starting from the found header row
-        const json = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
+        const json = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex, raw: false, dateNF: 'yyyy-mm-dd hh:mm:ss' });
         resolve(json);
       } catch (error) {
         reject(error);

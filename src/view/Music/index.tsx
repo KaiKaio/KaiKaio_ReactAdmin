@@ -65,7 +65,7 @@ const DragableBodyRow = ({
       ref={ref}
       className={`${className}${isOver ? dropClassName : ''}`}
       style={{ cursor: 'move', ...style }}
-      // eslint-disable-next-line react/jsx-props-no-spreading
+       
       {...restProps}
     />
   );

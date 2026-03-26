@@ -49,9 +49,18 @@ const Bookkeeping: React.FC = () => {
   const handleImport = (file: any) => {
     readExcel(file).then((json) => {
       const formatted = json.map((item: any, index: number) => {
-        // Date handling
-        const rawDate: string = item['交易时间'];
-        const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
+        const rawDate = item['交易时间'];
+        let date = '';
+        if (typeof rawDate === 'number') {
+          // Wx 新版本
+          const base = dayjs('1899-12-30');
+          const days = Math.floor(rawDate);
+          const seconds = Math.round((rawDate - days) * 86400);
+          date = base.add(days, 'day').add(seconds, 'second').format('YYYY-MM-DD HH:mm');
+        } else {
+          // Wx 旧版本
+          date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
+        }
 
         // Type handling
         const typeName: string = item['交易类型'];
