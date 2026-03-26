@@ -27,6 +27,7 @@ const Bookkeeping: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<IBillItem[]>([]);
   const [typeList, setTypeList] = useState<ITypeItem[]>([]);
+  const [sorterInfo, setSorterInfo] = useState<SorterResult<IBillItem>>({});
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 1000,
@@ -114,7 +115,7 @@ const Bookkeeping: React.FC = () => {
       });
 
       const {
-        totalExpense = 0, totalIncome = 0, totalPage = 0, list = [],
+        totalExpense = 0, totalIncome = 0, list = [],
       } = resData || {};
 
       const flatList: IBillItem[] = [];
@@ -129,8 +130,8 @@ const Bookkeeping: React.FC = () => {
       // Assuming totalPage is total pages count.
       setPagination({
         current: page,
-        pageSize,
-        total: totalPage * pageSize,
+        pageSize: pagination.pageSize,
+        total: flatList.length, // 这里直接使用当前页的条数，因为后端没有提供总条数
       });
       setTotals({
         expense: Math.ceil(totalExpense * 100) / 100 || 0,
@@ -154,11 +155,12 @@ const Bookkeeping: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchBillList(pagination.current, pagination.pageSize);
+    fetchBillList(pagination.current, pagination.pageSize, sorterInfo);
   }, [dateRange]);
 
   const handleTableChange: TableProps<IBillItem>['onChange'] = (pag, _filters, sorter) => {
-    fetchBillList(pag.current, pag.pageSize, sorter);
+    fetchBillList(pagination.current, pagination.pageSize, sorter);
+    setSorterInfo(sorter as SorterResult<IBillItem>);
   };
 
   const handleEditSubmit = async (values: any) => {
@@ -177,7 +179,7 @@ const Bookkeeping: React.FC = () => {
         message.success('更新成功');
         setEditModalVisible(false);
         setEditingRecord(null);
-        fetchBillList(pagination.current, pagination.pageSize);
+        fetchBillList(pagination.current, pagination.pageSize, sorterInfo);
       } else {
         message.error('更新失败');
       }
@@ -312,7 +314,7 @@ const Bookkeeping: React.FC = () => {
         onClose={() => setDrawerVisible(false)}
         onSave={() => {
           setDrawerVisible(false)
-          fetchBillList(pagination.current, pagination.pageSize)
+          fetchBillList(pagination.current, pagination.pageSize, sorterInfo)
         }}
       />
       <Modal
