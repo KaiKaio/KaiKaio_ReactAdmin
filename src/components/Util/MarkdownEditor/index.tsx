@@ -9,7 +9,7 @@ import {
   Spin, Modal, Input, Form,
 } from 'antd';
 
-import client from 'src/config/oss-config';
+import getOSSClient from 'src/config/oss-config';
 
 import Editor from 'react-markdown-editor-lite';
 import ReactMarkdown from 'react-markdown';
@@ -67,46 +67,45 @@ const MarkdownEditor: ForwardRefRenderFunction<
     }
   };
 
-  const onAddCover = (e: any) => {
+  const onAddCover = async (e: any) => {
     setupLoadLoading(true);
 
     const file = e.target.files[0];
     const storeAs = `article/${file.name}`;
-    client
-      .multipartUpload(storeAs, file, {})
-      .then((res: any) => {
-        // 上传
-        setupLoadLoading(false);
-        let str = res.res.requestUrls[0];
-        if (str.indexOf('?uploadId') !== -1) {
-          str = str.substring(0, str.indexOf('?uploadId'));
-        }
+    try {
+      const client = await getOSSClient();
+      const res: any = await client.multipartUpload(storeAs, file, {});
+      // 上传
+      setupLoadLoading(false);
+      let str = res.res.requestUrls[0];
+      if (str.indexOf('?uploadId') !== -1) {
+        str = str.substring(0, str.indexOf('?uploadId'));
+      }
 
-        setCoverUrl(str);
-      })
-      .catch((err: any) => {
-        setupLoadLoading(false);
-      });
+      setCoverUrl(str);
+    } catch (err: any) {
+      setupLoadLoading(false);
+      console.error('上传失败：', err);
+    }
   };
 
   const handleChange = (aValue: string) => {
     setValue(aValue);
   };
 
-  const addImg = (file: File, callback: (url: string) => void) => {
+  const addImg = async (file: File, callback: (url: string) => void) => {
     const storeAs = `markdowmImg/${file.name}`;
-    client
-      .multipartUpload(storeAs, file, {})
-      .then((res: any) => {
-        let str = res.res.requestUrls[0];
-        if (str.indexOf('?uploadId') !== -1) {
-          str = str.substring(0, str.indexOf('?uploadId'));
-        }
-        callback(str);
-      })
-      .catch((err: any) => {
-        console.error('上传失败：', err);
-      });
+    try {
+      const client = await getOSSClient();
+      const res: any = await client.multipartUpload(storeAs, file, {});
+      let str = res.res.requestUrls[0];
+      if (str.indexOf('?uploadId') !== -1) {
+        str = str.substring(0, str.indexOf('?uploadId'));
+      }
+      callback(str);
+    } catch (err: any) {
+      console.error('上传失败：', err);
+    }
   };
 
   const handleDelCover = (e: any) => {

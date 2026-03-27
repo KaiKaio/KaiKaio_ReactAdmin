@@ -5,7 +5,7 @@ import { getMusicList, addMusic } from 'src/api/Music';
 import {
   Modal, Form, Input, Spin,
 } from 'antd';
-import client from 'src/config/oss-config';
+import getOSSClient from 'src/config/oss-config';
 import { MusicContext } from 'src/view/Music';
 
 const AddMusic: FC = () => {
@@ -36,53 +36,51 @@ const AddMusic: FC = () => {
       });
   };
 
-  const onAddMusic = (e: any) => {
+  const onAddMusic = async (e: any) => {
     setMusicLoading(true);
 
     const file = e.target.files[0];
     const storeAs = `music/${file.name}`;
-    client
-      .multipartUpload(storeAs, file, {})
-      .then((res: any) => {
-        // 上传
-        setMusicLoading(false);
-        let str = res.res.requestUrls[0];
-        if (str.indexOf('?uploadId') === -1) {
-          setResultUrl(str); // 上传文件Url
-        } else {
-          str = str.substring(0, str.indexOf('?uploadId'));
-          setResultUrl(str);
-        }
-        setResultName(res.name); // 存储返回的名称（以备删除）
-      })
-      .catch((err: any) => {
-        setMusicLoading(false);
-        console.error('上传失败：', err);
-      });
+    try {
+      const client = await getOSSClient();
+      const res: any = await client.multipartUpload(storeAs, file, {});
+      // 上传
+      setMusicLoading(false);
+      let str = res.res.requestUrls[0];
+      if (str.indexOf('?uploadId') === -1) {
+        setResultUrl(str); // 上传文件Url
+      } else {
+        str = str.substring(0, str.indexOf('?uploadId'));
+        setResultUrl(str);
+      }
+      setResultName(res.name); // 存储返回的名称（以备删除）
+    } catch (err: any) {
+      setMusicLoading(false);
+      console.error('上传失败：', err);
+    }
   };
 
-  const onAddAlbumArt = (e: any) => {
+  const onAddAlbumArt = async (e: any) => {
     setMusicLoading(true);
 
     const file = e.target.files[0];
     const storeAs = `albumArt/${file.name}`;
-    client
-      .multipartUpload(storeAs, file, {})
-      .then((res: any) => {
-        // 上传
-        setMusicLoading(false);
-        let str = res.res.requestUrls[0];
-        if (str.indexOf('?uploadId') === -1) {
-          setResultPicUrl(str); // 上传文件Url
-        } else {
-          str = str.substring(0, str.indexOf('?uploadId'));
-          setResultPicUrl(str);
-        }
-      })
-      .catch((err: any) => {
-        setMusicLoading(false);
-        console.error('上传失败：', err);
-      });
+    try {
+      const client = await getOSSClient();
+      const res: any = await client.multipartUpload(storeAs, file, {});
+      // 上传
+      setMusicLoading(false);
+      let str = res.res.requestUrls[0];
+      if (str.indexOf('?uploadId') === -1) {
+        setResultPicUrl(str); // 上传文件Url
+      } else {
+        str = str.substring(0, str.indexOf('?uploadId'));
+        setResultPicUrl(str);
+      }
+    } catch (err: any) {
+      setMusicLoading(false);
+      console.error('上传失败：', err);
+    }
   };
 
   const labelCol = {

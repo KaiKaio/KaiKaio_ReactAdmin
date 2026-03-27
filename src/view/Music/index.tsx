@@ -7,7 +7,7 @@ import {
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import client from 'src/config/oss-config';
+import getOSSClient from 'src/config/oss-config';
 import AddMusic from 'src/view/Music/AddMusic';
 
 interface IMusicList {
@@ -112,24 +112,18 @@ const Music: React.FC = () => {
     });
   }, []);
 
-  const handleDelete = (text: any) => {
-    client
-      .delete(text.delname)
-      .then(() => {
-        // Ali-oss 删除
-        deleteMusic(text)
-          .then(() => getMusicList())
-          .then((res) => {
-            // 刷新列表
-            dispatch({ type: 'getMusicList', payload: res });
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      })
-      .catch((err: any) => {
-        console.error(err, '删除错误');
-      });
+  const handleDelete = async (text: any) => {
+    try {
+      const client = await getOSSClient();
+      await client.delete(text.delname);
+      // Ali-oss 删除
+      await deleteMusic(text._id);
+      const res = await getMusicList();
+      // 刷新列表
+      dispatch({ type: 'getMusicList', payload: res });
+    } catch (err) {
+      console.error(err, '删除错误');
+    }
   };
 
   const components = {

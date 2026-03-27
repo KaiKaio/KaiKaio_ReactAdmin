@@ -10,8 +10,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'src': path.resolve(__dirname, './src')
-    }
+      'src': path.resolve(__dirname, './src'),
+    },
   },
   server: {
     port: 3002,
@@ -46,9 +46,6 @@ export default defineConfig({
           if (id.includes('pinyin-pro')) {
             return 'pinyin';
           }
-          if (id.includes('ali-oss')) {
-            return 'oss';
-          }
           if (id.includes('xlsx')) {
             return 'xlsx';
           }
@@ -58,8 +55,6 @@ export default defineConfig({
         },
       },
     },
-    // 启用代码分割
-    minify: 'terser',
     chunkSizeWarningLimit: 600,
   },
 });

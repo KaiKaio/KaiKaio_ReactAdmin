@@ -8,7 +8,7 @@ import { getBackground, addBackground, deleteBackground } from 'src/api/Backgrou
 
 import { notification, Spin, Popconfirm } from 'antd';
 
-import client from 'src/config/oss-config';
+import getOSSClient from 'src/config/oss-config';
 
 const Background:FC = () => {
   const [uploadLoading, setupLoadLoading] = useState(false);
@@ -34,12 +34,14 @@ const Background:FC = () => {
     }
   };
 
-  const onAddBackground = (e:any) => {
+  const onAddBackground = async (e:any) => {
     setupLoadLoading(true);
 
     const file = e.target.files[0];
     const storeAs = `background/${file.name}`;
-    client.multipartUpload(storeAs, file, {}).then((res:any) => { // 上传
+    try {
+      const client = await getOSSClient();
+      const res:any = await client.multipartUpload(storeAs, file, {});
       setupLoadLoading(false);
       let str = res.res.requestUrls[0];
 
@@ -47,14 +49,13 @@ const Background:FC = () => {
         str = str.substring(0, str.indexOf('?uploadId'));
       }
 
-      return addBackground(str);
-    }).then(() => {
+      await addBackground(str);
       notification.success({ message: '添加背景成功' });
       fetchBackgroundData();
-    }).catch((err:any) => {
+    } catch (err) {
       setupLoadLoading(false);
       console.error('上传失败：', err);
-    });
+    }
   };
 
   const handleDelBackground = (e:any) => {
