@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "types": ["vite/client"],
     "baseUrl": ".",
     "target": "es5",
