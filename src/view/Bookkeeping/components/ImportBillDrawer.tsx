@@ -10,6 +10,7 @@ import {
   Space,
   message,
 } from 'antd';
+import { pinyin, match } from 'pinyin-pro';
 import { ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import dayjs from 'dayjs';
 import { batchAddBillItems } from 'src/api/Bookkeeping';
@@ -106,11 +107,37 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
           return;
         }
         message.success('保存成功');
+        setSelectedRowKeys([]);
         onSave();
       })
       .catch(() => {
         message.error('保存失败');
       });
+  };
+
+  const matchPinyinOption = (label: string = '', input: string = '') => {
+    const raw = (label || '').toString().trim().toLowerCase();
+    const query = (input || '').toString().trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    if (raw.includes(query)) {
+      return true;
+    }
+
+    const full = pinyin(label, { toneType: 'none' }).replace(/\s+/g, '').toLowerCase();
+    if (full.includes(query)) {
+      return true;
+    }
+
+    // pinyin-pro match 方法支持拼音缩写、首字母、模糊匹配等
+    if (match(label, query, { insensitive: true, space: 'ignore' })) {
+      return true;
+    }
+
+    return false;
   };
 
   const importColumns = [
@@ -138,7 +165,10 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
         <Select
           className="ibd-full-width"
           value={text}
-          showSearch={{ optionFilterProp: 'label' }}
+          showSearch={{
+            filterOption: (input, option) =>
+              matchPinyinOption(option?.label?.toString() ?? '', input),
+          }}
           options={typeList.map(item => ({
             label: item.name,
             value: item.id,
@@ -228,6 +258,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       <Table
         rowSelection={rowSelection}
         expandable={{
+          defaultExpandAllRows: true,
           expandedRowRender: record => (<Space>
             <span>
               源类型:

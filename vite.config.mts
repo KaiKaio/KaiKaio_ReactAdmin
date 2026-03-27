@@ -18,14 +18,48 @@ export default defineConfig({
     host: '0.0.0.0',
     cors: true,
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler', // 替代原有的 silenceDeprecations 解决旧 sass 警告
+  build: {
+    outDir: 'build',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // 核心框架
+          if (id.includes('react') && id.includes('node_modules')) {
+            return 'react-vendor';
+          }
+          if (id.includes('react-router')) {
+            return 'router';
+          }
+          // UI 相关
+          if (id.includes('antd') || id.includes('@ant-design')) {
+            return 'antd';
+          }
+          // 图表库
+          if (id.includes('echarts')) {
+            return 'chart';
+          }
+          // 编辑器相关
+          if (id.includes('react-markdown')) {
+            return 'markdown';
+          }
+          // 其他大型库
+          if (id.includes('pinyin-pro')) {
+            return 'pinyin';
+          }
+          if (id.includes('ali-oss')) {
+            return 'oss';
+          }
+          if (id.includes('xlsx')) {
+            return 'xlsx';
+          }
+          if (id.includes('react-dnd')) {
+            return 'dnd';
+          }
+        },
       },
     },
-  },
-  build: {
-    outDir: 'build', // 保持和 CRA 一致的输出目录
+    // 启用代码分割
+    minify: 'terser',
+    chunkSizeWarningLimit: 600,
   },
 });
