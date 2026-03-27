@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Upload,
   Button,
   message,
   Table,
@@ -16,8 +15,7 @@ import type { SorterResult } from 'antd/es/table/interface';
 import { UploadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getBillList, getBillTypeList, updateBillItem } from 'src/api/Bookkeeping';
-import readExcel from 'src/utils/file';
-import { IBillItem, ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
+import { IBillItem, ITypeItem } from 'src/type/Bookkeeping';
 import ImportBillDrawer from './components/ImportBillDrawer';
 import './index.scss';
 
@@ -40,72 +38,12 @@ const Bookkeeping: React.FC = () => {
   const [totals, setTotals] = useState({ expense: 0, income: 0 });
 
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [importData, setImportData] = useState<Partial<ILocalBillItem>[]>([]);
 
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState<IBillItem | null>(null);
   const [form] = Form.useForm();
 
-  const handleImport = (file: any) => {
-    readExcel(file).then((json) => {
-      const formatted = json.map((item: any, index: number) => {
-        const rawDate = item['交易时间'];
-        let date = '';
-        if (typeof rawDate === 'number') {
-          // Wx 新版本
-          const base = dayjs('1899-12-30');
-          const days = Math.floor(rawDate);
-          const seconds = Math.round((rawDate - days) * 86400);
-          date = base.add(days, 'day').add(seconds, 'second').format('YYYY-MM-DD HH:mm');
-        } else {
-          // Wx 旧版本
-          date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
-        }
 
-        // Type handling
-        const typeName: string = item['交易类型'];
-
-        // Pay Type handling
-        const rawPayType: string = item['收/支'];
-        const payType: '1' | '2' = rawPayType === '收入' ? '2' : '1';
-
-        // Amount handling
-        const rawAmount: string = item['金额(元)'];
-        const amount = rawAmount.toString().replace(/[¥,]/g, '');
-
-        const counterpartyOrigin: string = item['交易对方'];
-        const counterparty = counterpartyOrigin || '-';
-
-        // Remark handling （微信的商品字段适合备注）
-        const remark: string = item['商品'];
-
-        return {
-          id: index,
-          key: index,
-          date,
-
-          originTypeName: typeName, // Wx -数据源的交易类型
-          type_name: '', // 需要用户自己选择类型
-          counterparty, // Wx - 数据源的交易对方
-          pay_type: payType,
-          amount,
-          remark,
-        };
-      });
-      setImportData(formatted);
-      setDrawerVisible(true);
-      message.success('解析成功');
-    }).catch((error) => {
-      console.error(error);
-      message.error('解析失败');
-    });
-    return false;
-  };
-
-  const uploadProps = {
-    beforeUpload: handleImport,
-    showUploadList: false,
-  };
 
   const fetchBillList = async (page = 1, pageSize = 10, sorter?: SorterResult<IBillItem> | SorterResult<IBillItem>[]) => {
     setLoading(true);
@@ -297,11 +235,9 @@ const Bookkeeping: React.FC = () => {
           </span>
         </div>
         <div className="upload-wrapper">
-          <Upload {...uploadProps}>
-            <Button icon={<UploadOutlined />}>
-              导入账单
-            </Button>
-          </Upload>
+          <Button icon={<UploadOutlined />} onClick={() => setDrawerVisible(true)}>
+            导入账单
+          </Button>
         </div>
       </div>
       <div className="table-container">
@@ -319,7 +255,6 @@ const Bookkeeping: React.FC = () => {
       <ImportBillDrawer
         visible={drawerVisible}
         typeList={typeList}
-        importData={importData}
         onClose={() => setDrawerVisible(false)}
         onSave={() => {
           setDrawerVisible(false)

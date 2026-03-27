@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Drawer,
   Table,
@@ -14,28 +14,29 @@ import { pinyin, match } from 'pinyin-pro';
 import { ITypeItem, ILocalBillItem } from 'src/type/Bookkeeping';
 import dayjs from 'dayjs';
 import { batchAddBillItems } from 'src/api/Bookkeeping';
+import readExcel from 'src/utils/file';
+import { BillType, getBillParser } from './billParsers';
 import './ImportBillDrawer.scss';
 
 interface ImportBillDrawerProps {
   visible: boolean;
   typeList: ITypeItem[];
-  importData: Partial<ILocalBillItem>[];
   onClose: () => void;
   onSave: () => void;
 }
 
+
+
 const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
   visible,
   typeList,
-  importData,
   onClose,
   onSave,
 }) => {
-  const [localData, setLocalData] = useState<Partial<ILocalBillItem>[]>(importData);
+  const [localData, setLocalData] = useState<Partial<ILocalBillItem>[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  React.useEffect(() => {
-    setLocalData(importData);
-  }, [importData]);
+  const [billType, setBillType] = useState<BillType>('wechat');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleBatchDelete = () => {
     const newData = localData.filter(item => !selectedRowKeys.includes(item.id as React.Key));
@@ -113,6 +114,31 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       .catch(() => {
         message.error('保存失败');
       });
+  };
+
+  const handleImport = (file: File) => {
+    readExcel(file).then((json) => {
+      const parser = getBillParser(billType);
+      const formatted = parser(json);
+
+      setLocalData(formatted);
+      message.success('解析成功');
+    }).catch((error) => {
+      console.error(error);
+      message.error('解析失败');
+    });
+    return false;
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImport(file);
+    }
+    // 重置 input 值，允许重复选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const matchPinyinOption = (label: string = '', input: string = '') => {
@@ -231,6 +257,12 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     },
   ];
 
+  const billTypeOptions = [
+    { label: '微信账单', value: 'wechat' },
+    { label: '支付宝账单', value: 'alipay' },
+    { label: '京东账单', value: 'jd' },
+  ];
+
   return (
     <Drawer
       title="导入账单预览"
@@ -239,6 +271,25 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       open={visible}
     >
       <Space className="ibd-button-group">
+        <Select
+          value={billType}
+          onChange={setBillType}
+          options={billTypeOptions}
+          style={{ width: 140 }}
+        />
+        <input
+          type="file"
+          accept=".xlsx,.xls"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileSelect}
+        />
+        <Button
+          type="primary"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          导入
+        </Button>
         <Button 
           type="primary" 
           danger 
