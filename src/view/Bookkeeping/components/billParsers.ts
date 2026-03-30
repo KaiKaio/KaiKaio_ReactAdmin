@@ -129,7 +129,7 @@ export const parseTimiBill = (json: any[], typeList?: ITypeItem[]): Partial<ILoc
     const rawDate = item['交易时间'];
     const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
 
-    const typeName: string = item['交易分类'];
+    const typeName: string = item['账目名称'];
 
     const rawPayType: string = item['类型'];
     const payType: '1' | '2' = rawPayType === '支出' ? '1' : '2';
@@ -178,6 +178,6 @@ export const billParsers: Record<BillType, (json: any[], typeList?: ITypeItem[])
 /**
  * 根据账单类型获取对应的解析函数
  */
-export const getBillParser = (billType: BillType, typeList?: ITypeItem[]) => {
+export const getBillParser = (billType: BillType) => {
   return billParsers[billType] || parseWechatBill;
 };

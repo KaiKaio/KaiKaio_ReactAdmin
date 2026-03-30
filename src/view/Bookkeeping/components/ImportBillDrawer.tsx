@@ -118,8 +118,8 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
 
   const handleImport = (file: File) => {
     readExcel(file).then((json) => {
-      const parser = getBillParser(billType, typeList);
-      const formatted = parser(json);
+      const parser = getBillParser(billType);
+      const formatted = parser(json, typeList);
 
       setLocalData(formatted);
       message.success('解析成功');
@@ -187,7 +187,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
       dataIndex: 'type_id',
       key: 'type_id',
       width: 160,
-      render: (text: number, record: any) => (
+      render: (text: string, record: any) => (
         <Select
           className="ibd-full-width"
           value={text}
@@ -197,11 +197,11 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
           }}
           options={typeList.map(item => ({
             label: item.name,
-            value: item.id,
+            value: `${item.id}`,
           }))}
-          onChange={(value: number) => {
+          onChange={(value: string) => {
             handleCellChange(value, record.id, 'type_id')
-            handleCellChange(typeList.find(item => item.id === value)?.name || '', record.id, 'type_name')
+            handleCellChange(typeList.find(item => `${item.id}` === value)?.name || '', record.id, 'type_name')
           }}
         >
         </Select>
