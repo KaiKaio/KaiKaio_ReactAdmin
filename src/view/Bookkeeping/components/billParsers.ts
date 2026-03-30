@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ILocalBillItem } from 'src/type/Bookkeeping';
+import { ILocalBillItem, ITypeItem } from 'src/type/Bookkeeping';
 
 export type BillType = 'wechat' | 'alipay' | 'jd' | 'timi';
 
@@ -124,8 +124,8 @@ export const parseJdBill = (json: any[]): Partial<ILocalBillItem>[] => {
 /**
  * 解析Timi账单
  */
-export const parseTimiBill = (json: any[]): Partial<ILocalBillItem>[] => {
-    return json.map((item: any, index: number) => {
+export const parseTimiBill = (json: any[], typeList?: ITypeItem[]): Partial<ILocalBillItem>[] => {
+  return json.map((item: any, index: number) => {
     const rawDate = item['交易时间'];
     const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
 
@@ -133,6 +133,16 @@ export const parseTimiBill = (json: any[]): Partial<ILocalBillItem>[] => {
 
     const rawPayType: string = item['类型'];
     const payType: '1' | '2' = rawPayType === '支出' ? '1' : '2';
+
+    if (!typeList?.length) {
+      throw new Error('Type list is required for Timi bill parsing');
+    }
+
+    const typeItem = typeList.find(type => type.name === typeName);
+
+    if (!typeItem) {
+      throw new Error(`Type "${typeName}" not found in type list`);
+    }
 
     const rawAmount: string = item['金额'];
     const amount = rawAmount?.toString().replace(/[¥,]/g, '') || '0';
@@ -145,7 +155,8 @@ export const parseTimiBill = (json: any[]): Partial<ILocalBillItem>[] => {
       key: index,
       date,
       originTypeName: typeName,
-      type_name: '',
+      type_name: typeItem?.name || '',
+      type_id: `${typeItem?.id}` || '',
       counterparty,
       pay_type: payType,
       amount,
@@ -157,7 +168,7 @@ export const parseTimiBill = (json: any[]): Partial<ILocalBillItem>[] => {
 /**
  * 账单解析器映射表
  */
-export const billParsers: Record<BillType, (json: any[]) => Partial<ILocalBillItem>[]> = {
+export const billParsers: Record<BillType, (json: any[], typeList?: ITypeItem[]) => Partial<ILocalBillItem>[]> = {
   wechat: parseWechatBill,
   alipay: parseAlipayBill,
   jd: parseJdBill,
@@ -167,6 +178,6 @@ export const billParsers: Record<BillType, (json: any[]) => Partial<ILocalBillIt
 /**
  * 根据账单类型获取对应的解析函数
  */
-export const getBillParser = (billType: BillType) => {
+export const getBillParser = (billType: BillType, typeList?: ITypeItem[]) => {
   return billParsers[billType] || parseWechatBill;
 };

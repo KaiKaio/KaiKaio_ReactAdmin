@@ -118,7 +118,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
 
   const handleImport = (file: File) => {
     readExcel(file).then((json) => {
-      const parser = getBillParser(billType);
+      const parser = getBillParser(billType, typeList);
       const formatted = parser(json);
 
       setLocalData(formatted);
