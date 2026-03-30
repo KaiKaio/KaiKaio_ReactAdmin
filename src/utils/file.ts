@@ -16,7 +16,7 @@ const readExcel = (file: File): Promise<any[]> => new Promise((resolve, reject) 
 
         let headerRowIndex = 0;
         // Look for common headers
-        const knownHeaders = ['日期', '交易时间', 'Date', 'Time'];
+        const knownHeaders = ['日期', '时间', '交易时间', 'Date', 'Time'];
 
         for (let i = 0; i < Math.min(rows.length, 50); i++) { // Check first 50 rows
           const row = rows[i];

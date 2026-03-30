@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { ILocalBillItem } from 'src/type/Bookkeeping';
 
-export type BillType = 'wechat' | 'alipay' | 'jd';
+export type BillType = 'wechat' | 'alipay' | 'jd' | 'timi';
 
 export interface ParsedBillItem {
   id: number;
@@ -122,12 +122,46 @@ export const parseJdBill = (json: any[]): Partial<ILocalBillItem>[] => {
 };
 
 /**
+ * 解析Timi账单
+ */
+export const parseTimiBill = (json: any[]): Partial<ILocalBillItem>[] => {
+    return json.map((item: any, index: number) => {
+    const rawDate = item['交易时间'];
+    const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
+
+    const typeName: string = item['交易分类'];
+
+    const rawPayType: string = item['类型'];
+    const payType: '1' | '2' = rawPayType === '支出' ? '1' : '2';
+
+    const rawAmount: string = item['金额'];
+    const amount = rawAmount?.toString().replace(/[¥,]/g, '') || '0';
+    const counterpartyOrigin: string = item['账目编号'];
+    const counterparty = counterpartyOrigin || '-';
+    const remark: string = item['备注'] || '';
+
+    return {
+      id: index,
+      key: index,
+      date,
+      originTypeName: typeName,
+      type_name: '',
+      counterparty,
+      pay_type: payType,
+      amount,
+      remark,
+    };
+  });
+};
+
+/**
  * 账单解析器映射表
  */
 export const billParsers: Record<BillType, (json: any[]) => Partial<ILocalBillItem>[]> = {
   wechat: parseWechatBill,
   alipay: parseAlipayBill,
   jd: parseJdBill,
+  timi: parseTimiBill,
 };
 
 /**

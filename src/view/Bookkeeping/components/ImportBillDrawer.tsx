@@ -261,6 +261,7 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
     { label: '微信账单', value: 'wechat' },
     { label: '支付宝账单', value: 'alipay' },
     { label: '京东账单', value: 'jd' },
+    { label: 'Timi账单', value: 'timi' },
   ];
 
   return (
