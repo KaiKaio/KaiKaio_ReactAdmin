@@ -31,10 +31,23 @@ const Bookkeeping: React.FC = () => {
     pageSize: 1000,
     total: 0,
   });
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
-    dayjs().startOf('month'),
-    dayjs().endOf('month'),
-  ]);
+  const STORAGE_KEY = 'bookkeeping_date_range';
+
+  const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === 2) {
+          return [dayjs(parsed[0]), dayjs(parsed[1])];
+        }
+      }
+    } catch (e) {
+      // ignore and fallback to defaults
+      console.error('Failed to parse date range from localStorage, using defaults.', e);
+    }
+    return [dayjs().startOf('month'), dayjs().endOf('month')];
+  });
   const [totals, setTotals] = useState({ expense: 0, income: 0 });
 
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -150,6 +163,15 @@ const Bookkeeping: React.FC = () => {
 
   const handleDateChange = (dates: any) => {
     if (dates && dates.length === 2) {
+      // persist to localStorage whenever date range changes
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify([dates[0].format('YYYY-MM-DD'), dates[1].format('YYYY-MM-DD')])
+        );
+      } catch (e) {
+        console.error('Failed to save date range to localStorage.', e);
+      }
       setDateRange(dates);
       setPagination({ ...pagination, current: 1 });
     }

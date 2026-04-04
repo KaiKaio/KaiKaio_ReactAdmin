@@ -7,6 +7,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Empty,
   Space,
   message,
 } from 'antd';
@@ -307,35 +308,40 @@ const ImportBillDrawer: React.FC<ImportBillDrawerProps> = ({
         </Button>
       </Space>
 
-      <Table
-        rowSelection={rowSelection}
-        expandable={{
-          defaultExpandAllRows: true,
-          expandedRowRender: record => (<Space>
-            <span>
-              源类型:
-              {record.originTypeName || '-'}
-            </span>
-            <span> 
-              {'/'}
-            </span>
-            <span>
-              交易对方:
-              {record.counterparty || '-'}
-            </span>
-          </Space>),
-        }}
-        scroll={{ y: 460, x: 720 }}
-        dataSource={localData}
-        columns={importColumns}
-        pagination={{
-          defaultPageSize: 15,
-          showSizeChanger: true,
-          pageSizeOptions: ['15', '30', '50', '100'],
-          showTotal: total => `共 ${total} 条数据`,
-        }}
-        rowKey="id"
-      />
+      {
+        localData?.length > 0 ? (
+          <Table
+            key="import-bill-table"
+            rowSelection={rowSelection}
+            expandable={{
+              defaultExpandAllRows: true,
+              expandedRowRender: record => (<Space>
+                <span>
+                  源类型:
+                  {record.originTypeName || '-'}
+                </span>
+                <span> 
+                  {'/'}
+                </span>
+                <span>
+                  交易对方:
+                  {record.counterparty || '-'}
+                </span>
+              </Space>),
+            }}
+            scroll={{ y: 460, x: 720 }}
+            dataSource={localData}
+            columns={importColumns}
+            pagination={{
+              defaultPageSize: 15,
+              showSizeChanger: true,
+              pageSizeOptions: ['15', '30', '50', '100'],
+              showTotal: total => `共 ${total} 条数据`,
+            }}
+            rowKey="id"
+          />
+        ) : <Empty description="暂无数据，请选择文件导入数据" />
+      }
       <div className='ibd-footer'>
         <Button onClick={onClose} className='btn-cancel'>
           取消

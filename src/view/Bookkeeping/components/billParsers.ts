@@ -126,7 +126,7 @@ export const parseJdBill = (json: any[]): Partial<ILocalBillItem>[] => {
  */
 export const parseTimiBill = (json: any[], typeList?: ITypeItem[]): Partial<ILocalBillItem>[] => {
   return json.map((item: any, index: number) => {
-    const rawDate = item['交易时间'];
+    const rawDate = item['时间'];
     const date = dayjs(rawDate).format('YYYY-MM-DD HH:mm');
 
     const typeName: string = item['账目名称'];
