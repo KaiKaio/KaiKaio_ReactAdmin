@@ -1,11 +1,11 @@
 import React, { FC, useState, useContext } from 'react';
 
 import { getMusicList, addMusic } from 'src/api/Music';
+import { uploadFile } from 'src/api/Common';
 
 import {
   Modal, Form, Input, Spin,
 } from 'antd';
-import getOSSClient from 'src/config/oss-config';
 import { MusicContext } from 'src/view/Music';
 
 const AddMusic: FC = () => {
@@ -40,20 +40,13 @@ const AddMusic: FC = () => {
     setMusicLoading(true);
 
     const file = e.target.files[0];
-    const storeAs = `music/${file.name}`;
     try {
-      const client = await getOSSClient();
-      const res: any = await client.multipartUpload(storeAs, file, {});
-      // 上传
+      const res = await uploadFile(file);
       setMusicLoading(false);
-      let str = res.res.requestUrls[0];
-      if (str.indexOf('?uploadId') === -1) {
-        setResultUrl(str); // 上传文件Url
-      } else {
-        str = str.substring(0, str.indexOf('?uploadId'));
-        setResultUrl(str);
+      if (res.code === 200 && res.data) {
+        setResultUrl(import.meta.env.VITE_BILL_URL + res.data);
+        setResultName(file.name);
       }
-      setResultName(res.name); // 存储返回的名称（以备删除）
     } catch (err: any) {
       setMusicLoading(false);
       console.error('上传失败：', err);
@@ -64,18 +57,11 @@ const AddMusic: FC = () => {
     setMusicLoading(true);
 
     const file = e.target.files[0];
-    const storeAs = `albumArt/${file.name}`;
     try {
-      const client = await getOSSClient();
-      const res: any = await client.multipartUpload(storeAs, file, {});
-      // 上传
+      const res = await uploadFile(file);
       setMusicLoading(false);
-      let str = res.res.requestUrls[0];
-      if (str.indexOf('?uploadId') === -1) {
-        setResultPicUrl(str); // 上传文件Url
-      } else {
-        str = str.substring(0, str.indexOf('?uploadId'));
-        setResultPicUrl(str);
+      if (res.code === 200 && res.data) {
+        setResultPicUrl(import.meta.env.VITE_BILL_URL + res.data);
       }
     } catch (err: any) {
       setMusicLoading(false);

@@ -9,7 +9,7 @@ import {
   Spin, Modal, Input, Form,
 } from 'antd';
 
-import getOSSClient from 'src/config/oss-config';
+import { uploadFile } from 'src/api/Common';
 
 import Editor from 'react-markdown-editor-lite';
 import ReactMarkdown from 'react-markdown';
@@ -71,18 +71,12 @@ const MarkdownEditor: ForwardRefRenderFunction<
     setupLoadLoading(true);
 
     const file = e.target.files[0];
-    const storeAs = `article/${file.name}`;
     try {
-      const client = await getOSSClient();
-      const res: any = await client.multipartUpload(storeAs, file, {});
-      // 上传
+      const res = await uploadFile(file);
       setupLoadLoading(false);
-      let str = res.res.requestUrls[0];
-      if (str.indexOf('?uploadId') !== -1) {
-        str = str.substring(0, str.indexOf('?uploadId'));
+      if (res.code === 200 && res.data) {
+        setCoverUrl(import.meta.env.VITE_BILL_URL + res.data);
       }
-
-      setCoverUrl(str);
     } catch (err: any) {
       setupLoadLoading(false);
       console.error('上传失败：', err);
@@ -94,15 +88,11 @@ const MarkdownEditor: ForwardRefRenderFunction<
   };
 
   const addImg = async (file: File, callback: (url: string) => void) => {
-    const storeAs = `markdowmImg/${file.name}`;
     try {
-      const client = await getOSSClient();
-      const res: any = await client.multipartUpload(storeAs, file, {});
-      let str = res.res.requestUrls[0];
-      if (str.indexOf('?uploadId') !== -1) {
-        str = str.substring(0, str.indexOf('?uploadId'));
+      const res = await uploadFile(file);
+      if (res.code === 200 && res.data) {
+        callback(import.meta.env.VITE_BILL_URL + res.data);
       }
-      callback(str);
     } catch (err: any) {
       console.error('上传失败：', err);
     }

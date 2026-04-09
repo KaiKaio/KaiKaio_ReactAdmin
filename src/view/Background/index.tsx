@@ -5,10 +5,9 @@ import React, {
 import './index.scss';
 
 import { getBackground, addBackground, deleteBackground } from 'src/api/Background';
+import { uploadFile } from 'src/api/Common';
 
 import { notification, Spin, Popconfirm } from 'antd';
-
-import getOSSClient from 'src/config/oss-config';
 
 const Background:FC = () => {
   const [uploadLoading, setupLoadLoading] = useState(false);
@@ -38,20 +37,14 @@ const Background:FC = () => {
     setupLoadLoading(true);
 
     const file = e.target.files[0];
-    const storeAs = `background/${file.name}`;
     try {
-      const client = await getOSSClient();
-      const res:any = await client.multipartUpload(storeAs, file, {});
+      const res = await uploadFile(file);
       setupLoadLoading(false);
-      let str = res.res.requestUrls[0];
-
-      if (str.indexOf('?uploadId') !== -1) {
-        str = str.substring(0, str.indexOf('?uploadId'));
+      if (res.code === 200 && res.data) {
+        await addBackground(import.meta.env.VITE_BILL_URL + res.data);
+        notification.success({ message: '添加背景成功' });
+        fetchBackgroundData();
       }
-
-      await addBackground(str);
-      notification.success({ message: '添加背景成功' });
-      fetchBackgroundData();
     } catch (err) {
       setupLoadLoading(false);
       console.error('上传失败：', err);

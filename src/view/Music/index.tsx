@@ -7,7 +7,6 @@ import {
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
-import getOSSClient from 'src/config/oss-config';
 import AddMusic from 'src/view/Music/AddMusic';
 
 interface IMusicList {
@@ -114,9 +113,6 @@ const Music: React.FC = () => {
 
   const handleDelete = async (text: any) => {
     try {
-      const client = await getOSSClient();
-      await client.delete(text.delname);
-      // Ali-oss 删除
       await deleteMusic(text._id);
       const res = await getMusicList();
       // 刷新列表
