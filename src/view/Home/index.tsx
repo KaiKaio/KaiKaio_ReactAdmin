@@ -5,26 +5,21 @@ import {
 } from 'antd';
 
 import { getArticle, deleteArticle } from 'src/api/Article';
+import { IArticleList } from 'src/type/Article';
 
 import './index.scss';
 
-interface IArticleList {
-  _id: string;
-  title: string;
-  description: string;
-  content: string;
-  createtime: string;
-  cover: string;
-  _v: number;
-}
-
 const Home: React.FC = (props: any) => {
-  const [Article, setArticle] = React.useState([]);
+  const [Article, setArticle] = React.useState<IArticleList[]>([]);
 
   React.useEffect(() => {
     getArticle()
-      .then((res: any) => {
-        setArticle(res);
+      .then((res) => {
+        if (!res?.data?.data?.length) {
+          notification.error({ message: '获取文章列表失败' });
+          return;
+        }
+        setArticle(res.data?.data || []);
       })
       .catch((err) => {
         console.error(err, '请求错误');
@@ -64,7 +59,7 @@ const Home: React.FC = (props: any) => {
           key="cover"
           title="封面"
           render={text => (
-            <Avatar shape="square" size={64} src={text.cover} />
+            <Avatar shape="square" size={64} src={text?.cover || null} />
           )}
         />
         <Table.Column<IArticleList>

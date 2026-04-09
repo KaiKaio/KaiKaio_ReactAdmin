@@ -127,7 +127,7 @@ const Aside: React.FC = () => {
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
         className="mobile-drawer"
-        width={280}
+        size={280}
       >
         <div id="aside" className="drawer-content">
           {renderNavContent()}

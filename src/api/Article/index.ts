@@ -1,13 +1,8 @@
 import axios from 'src/config/fetchInstance';
+import { IArticleList } from 'src/type/Article';
+import { ApiResponse } from 'src/types/api';
 
-const getArticle = () => new Promise((resolve, reject) => {
-  axios.get('/Article').then((res:any) => {
-    const { data } = res.data;
-    resolve(data);
-  }).catch((err) => {
-    reject(err);
-  });
-});
+const getArticle = () => axios.get<ApiResponse<IArticleList[]>>('/Article');
 
 const editArticle = (
   id:string,
