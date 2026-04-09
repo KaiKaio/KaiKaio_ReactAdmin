@@ -101,7 +101,6 @@ const Home: React.FC = (props: any) => {
                 role="button"
                 tabIndex={0}
                 onClick={() => handleEdit(text)}
-                onKeyPress={() => handleEdit(text)}
               >
                 编辑
               </span>

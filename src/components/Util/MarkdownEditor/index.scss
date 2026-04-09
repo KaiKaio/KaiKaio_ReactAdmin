@@ -56,3 +56,82 @@
     }
   }
 }
+
+// 平板适配
+@media screen and (max-width: 1024px) {
+  #MarkdownEditor {
+    .edit-input {
+      width: 100%;
+    }
+    
+    .upload-area {
+      height: 12rem;
+      width: 12rem;
+    }
+  }
+}
+
+// 移动端适配
+@media screen and (max-width: 768px) {
+  #MarkdownEditor {
+    .rc-md-editor {
+      font-size: 1.4rem;
+    }
+    
+    .rc-md-editor .header {
+      height: 4rem;
+    }
+    
+    .rc-md-editor .editor-container {
+      height: calc(100vh - 25rem);
+    }
+    
+    .edit-input {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    
+    .upload-area {
+      height: 12rem;
+      width: 12rem;
+    }
+    
+    .ant-form-item-label {
+      label {
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
+
+// 小屏幕手机适配
+@media screen and (max-width: 480px) {
+  #MarkdownEditor {
+    .rc-md-editor {
+      font-size: 1.3rem;
+    }
+    
+    .rc-md-editor .header {
+      height: 3.5rem;
+    }
+    
+    .rc-md-editor .editor-container {
+      height: calc(100vh - 22rem);
+    }
+    
+    .edit-input {
+      margin-bottom: 1rem;
+    }
+    
+    .upload-area {
+      height: 10rem;
+      width: 10rem;
+    }
+    
+    .ant-form-item-label {
+      label {
+        font-size: 1.3rem;
+      }
+    }
+  }
+}

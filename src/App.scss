@@ -22,6 +22,33 @@ html {
   box-sizing: border-box;
 }
 
+// 平板适配 (<= 1024px)
+@media screen and (max-width: 1024px) {
+  #main {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    padding: 1.5rem 1.5rem;
+  }
+}
+
+// 移动端适配 (<= 768px)
+@media screen and (max-width: 768px) {
+  #main {
+    margin-left: 0;
+    width: 100%;
+    height: calc(100vh - 5rem);
+    padding: 1rem;
+  }
+}
+
+// 小屏幕手机适配 (<= 480px)
+@media screen and (max-width: 480px) {
+  #main {
+    padding: 0.8rem;
+    height: calc(100vh - 4.5rem);
+  }
+}
+
 
 /* 路由动画相关样式 */
 .fade-enter,
