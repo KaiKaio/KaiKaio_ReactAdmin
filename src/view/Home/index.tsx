@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import {
   Table, Popconfirm, Avatar, notification, Button,
 } from 'antd';
@@ -9,7 +9,8 @@ import { IArticleList } from 'src/type/Article';
 
 import './index.scss';
 
-const Home: React.FC = (props: any) => {
+const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [Article, setArticle] = React.useState<IArticleList[]>([]);
 
   React.useEffect(() => {
@@ -27,7 +28,7 @@ const Home: React.FC = (props: any) => {
   }, []);
 
   const handleEdit = (text: any) => {
-    props?.history?.push(`/editArticle/${text._id}`);
+    navigate(`/editArticle/${text._id}`);
   };
 
   const handleDelete = (text: any) => {
