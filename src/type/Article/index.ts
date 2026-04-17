@@ -1,4 +1,4 @@
-export interface IArticleList {
+export interface IArticleItem {
   _id: string;
   title: string;
   description: string;

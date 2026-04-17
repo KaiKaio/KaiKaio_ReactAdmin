@@ -9,7 +9,8 @@ import {
   Input,
   Select,
   InputNumber,
-  type TableProps
+  type TableProps,
+  FormProps,
 } from 'antd';
 import type { SorterResult } from 'antd/es/table/interface';
 import { UploadOutlined } from '@ant-design/icons';
@@ -20,6 +21,8 @@ import ImportBillDrawer from './components/ImportBillDrawer';
 import './index.scss';
 
 const { RangePicker } = DatePicker;
+
+type EditBillItemFieldType = Omit<IBillItem, 'id' | 'date'> & { date: dayjs.Dayjs }
 
 const Bookkeeping: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -123,7 +126,7 @@ const Bookkeeping: React.FC = () => {
     setSorterInfo(sorter as SorterResult<IBillItem>);
   };
 
-  const handleEditSubmit = async (values: any) => {
+  const handleEditSubmit: FormProps<EditBillItemFieldType>['onFinish'] = async (values) => {
     if (!editingRecord) return;
     try {
       const updateData: IBillItem = {
@@ -191,7 +194,7 @@ const Bookkeeping: React.FC = () => {
       key: 'type_name',
       render: (text: string, record: IBillItem) => (
         <span>
-          {typeList.find(t => `${t.id}` === record.type_id)?.name || '未知类型'}
+          {typeList.find(t => t.id === record.type_id)?.name || '未知类型'}
         </span>
       ),
     },
@@ -299,27 +302,27 @@ const Bookkeeping: React.FC = () => {
           layout="vertical"
           onFinish={handleEditSubmit}
         >
-          <Form.Item
+          <Form.Item<EditBillItemFieldType>
             label="日期"
             name="date"
             rules={[{ required: true, message: '请选择日期' }]}
           >
             <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
-          <Form.Item
+          <Form.Item<EditBillItemFieldType>
             label="类型"
             name="type_id"
             rules={[{ required: true, message: '请选择类型' }]}
           >
-            <Select placeholder="选择类型">
-              {typeList.map(type => (
-                <Select.Option key={type.id} value={`${type.id}`}>
-                  {type.name}
-                </Select.Option>
-              ))}
-            </Select>
+            <Select
+              placeholder="选择类型"
+              options={typeList.map(item => ({
+                label: item.name,
+                value: item.id,
+              }))}
+            />
           </Form.Item>
-          <Form.Item
+          <Form.Item<EditBillItemFieldType>
             label="收支"
             name="pay_type"
             rules={[{ required: true, message: '请选择收支类型' }]}
@@ -333,14 +336,14 @@ const Bookkeeping: React.FC = () => {
               </Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item
+          <Form.Item<EditBillItemFieldType>
             label="金额"
             name="amount"
             rules={[{ required: true, message: '请输入金额' }]}
           >
             <InputNumber min={0} step={0.01} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item
+          <Form.Item<EditBillItemFieldType>
             label="备注"
             name="remark"
           >

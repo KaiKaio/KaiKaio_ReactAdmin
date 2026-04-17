@@ -5,13 +5,13 @@ import {
 } from 'antd';
 
 import { getArticle, deleteArticle } from 'src/api/Article';
-import { IArticleList } from 'src/type/Article';
+import { IArticleItem } from 'src/type/Article';
 
 import './index.scss';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const [Article, setArticle] = React.useState<IArticleList[]>([]);
+  const [Article, setArticle] = React.useState<IArticleItem[]>([]);
 
   React.useEffect(() => {
     getArticle()
@@ -27,12 +27,12 @@ const Home: React.FC = () => {
       });
   }, []);
 
-  const handleEdit = (text: any) => {
-    navigate(`/editArticle/${text._id}`);
+  const handleEdit = (row: IArticleItem) => {
+    navigate(`/editArticle/${row._id}`);
   };
 
-  const handleDelete = (text: any) => {
-    deleteArticle(text)
+  const handleDelete = (row: IArticleItem) => {
+    deleteArticle(row)
       .then(() => getArticle())
       .then((res: any) => {
         setArticle(res);
@@ -55,37 +55,37 @@ const Home: React.FC = () => {
         </Button>
       </div>
 
-      <Table<IArticleList> rowKey="_id" dataSource={Article}>
-        <Table.Column<IArticleList>
+      <Table<IArticleItem> rowKey="_id" dataSource={Article}>
+        <Table.Column<IArticleItem>
           key="cover"
           title="封面"
           render={text => (
             <Avatar shape="square" size={64} src={text?.cover || null} />
           )}
         />
-        <Table.Column<IArticleList>
+        <Table.Column<IArticleItem>
           key="title"
           title="标题"
           dataIndex="title"
         />
-        <Table.Column<IArticleList>
+        <Table.Column<IArticleItem>
           key="escription"
           title="描述"
           dataIndex="description"
         />
-        <Table.Column<IArticleList>
+        <Table.Column<IArticleItem>
           key="createtime"
           title="创建时间"
           dataIndex="createtime"
         />
-        <Table.Column<IArticleList>
+        <Table.Column<IArticleItem>
           key="action"
           title="操作"
-          render={text => (
+          render={(row: IArticleItem) => (
             <span className="function-button">
               <Popconfirm
                 title="是否选择残忍删除？"
-                onConfirm={() => handleDelete(text)}
+                onConfirm={() => handleDelete(row)}
                 okText="错的不是我，是这个世界"
                 cancelText="算了，心软了"
               >
@@ -96,7 +96,7 @@ const Home: React.FC = () => {
               <span
                 role="button"
                 tabIndex={0}
-                onClick={() => handleEdit(text)}
+                onClick={() => handleEdit(row)}
               >
                 编辑
               </span>

@@ -1,8 +1,8 @@
 import axios from 'src/config/fetchInstance';
-import { IArticleList } from 'src/type/Article';
+import { IArticleItem } from 'src/type/Article';
 import { ApiResponse } from 'src/types/api';
 
-const getArticle = () => axios.get<ApiResponse<IArticleList[]>>('/Article');
+const getArticle = () => axios.get<ApiResponse<IArticleItem[]>>('/Article');
 
 const editArticle = (
   id:string,

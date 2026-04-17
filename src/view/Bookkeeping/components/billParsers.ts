@@ -156,7 +156,7 @@ export const parseTimiBill = (json: any[], typeList?: ITypeItem[]): Partial<ILoc
       date,
       originTypeName: typeName,
       type_name: typeItem?.name || '',
-      type_id: `${typeItem?.id}` || '',
+      type_id: typeItem?.id || -1,
       counterparty,
       pay_type: payType,
       amount,
