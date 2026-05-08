@@ -17,11 +17,17 @@ const AddMusic: FC = () => {
   const [resultUrl, setResultUrl] = useState('');
   const [resultName, setResultName] = useState('');
   const [resultPicUrl, setResultPicUrl] = useState('');
+  const [lrc, setLrc] = useState('');
   const [musicLoading, setMusicLoading] = useState(false);
 
   const handleOk = () => {
     setConfirmLoading(true);
-    addMusic(musicName, resultUrl, singerName, '', resultName, resultPicUrl)
+    // 计算新的 sortIndex（取当前最大值 + 1）
+    const currentList = musicContext.state.MusicList || [];
+    const maxIndex = currentList.length > 0 ? Math.max(...currentList.map((i: any) => (i.sortIndex || 0))) : -1;
+    const newSortIndex = maxIndex + 1;
+
+    addMusic(musicName, resultUrl, singerName, lrc, resultName, resultPicUrl, newSortIndex)
       .then(() => {
         getMusicList().then((res) => {
           musicContext.dispatch({ type: 'getMusicList', payload: res });
@@ -131,9 +137,14 @@ const AddMusic: FC = () => {
               />
             </Form.Item>
 
-            {/* <Form.Item label="歌词：">
-            <Input placeholder="请输入歌词"/>
-          </Form.Item> */}
+            <Form.Item label="歌词：">
+              <Input.TextArea
+                value={lrc}
+                placeholder="请输入歌词"
+                rows={6}
+                onChange={e => setLrc(e.target.value)}
+              />
+            </Form.Item>
 
             {/* <Form.Item label="音乐名称：">
             <Input placeholder="请输入音乐名称"/>

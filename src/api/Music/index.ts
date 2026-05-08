@@ -24,14 +24,16 @@ const addMusic = (
   lrc:string,
   resultName:string,
   resultPicUrl:string,
+  sortIndex:number,
 ) => new Promise((resolve, reject) => {
   axios.post('/Music/Add', {
     title: musicName,
     url: resultUrl,
     singer: singerName,
-    lrc: '',
+    lrc: lrc,
     delname: resultName,
     albumart: resultPicUrl,
+    sortIndex,
   }).then((res) => {
     resolve(res);
   }).catch((err) => {
@@ -50,9 +52,36 @@ const sortMusicList = (changeIDList: {
     });
   });
 
+const editMusic = (
+  id: string,
+  musicName:string,
+  resultUrl:string,
+  singerName:string,
+  lrc:string,
+  resultName:string,
+  resultPicUrl:string,
+  sortIndex:number,
+) => new Promise((resolve, reject) => {
+  axios.put('/Music/Edit/', {
+    id,
+    title: musicName,
+    url: resultUrl,
+    singer: singerName,
+    lrc,
+    delname: resultName,
+    albumart: resultPicUrl,
+    sortIndex,
+  }).then((res) => {
+    resolve(res);
+  }).catch((err) => {
+    reject(err);
+  });
+});
+
 export {
   getMusicList,
   deleteMusic,
   addMusic,
+  editMusic,
   sortMusicList,
 };
