@@ -12,6 +12,7 @@ const uploadFile = (file: File): Promise<{
 		headers: {
 			'Content-Type': 'multipart/form-data',
 		},
+		timeout: 60 * 1000 * 4,
 	});
 };
 
