@@ -13,7 +13,7 @@
     "@types/react-loadable": "^5.5.4",
     "@types/react-transition-group": "^4.2.3",
     "antd": "^6.3.3",
-    "axios": "^1.15.2",
+    "axios": "^1.16.0",
     "dotenv-cli": "^4.0.0",
     "echarts": "^5.5.1",
     "immutability-helper": "^3.1.1",
