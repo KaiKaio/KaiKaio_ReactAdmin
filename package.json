@@ -15,7 +15,7 @@
     "antd": "^6.3.3",
     "axios": "^1.15.2",
     "dotenv-cli": "^4.0.0",
-    "echarts": "^5.5.1",
+    "echarts": "^6.1.0",
     "immutability-helper": "^3.1.1",
     "pinyin-pro": "^3.28.0",
     "react": "^19.2.4",
